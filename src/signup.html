@@ -71,9 +71,6 @@
         const { Client, Account, ID } = Appwrite;
         const client = new Client();
 
-        // ===================================================================
-        // ⭐⭐⭐ الخطوة 1: تصحيح إعدادات الاتصال (أهم تغيير) ⭐⭐⭐
-        // ===================================================================
         client
     .setEndpoint("https://fra.cloud.appwrite.io/v1")  // الرابط الصحيح
     .setProject("66bdd9ef0022a854dccc");             // الـ ID الصحيح        // الـ ID الصحيح
@@ -119,8 +116,8 @@
     try {
         account.createOAuth2Session(
             'google',
-             'http://localhost:5173/src/app.html',  
-            'http://localhost:5173/src/login.html'
+             'https://bioterms.space/src/app.html',  
+            'https://bioterms.space/src/login.html'
         );
     } catch (error) {
         console.error('Google login error:', error);
@@ -128,9 +125,6 @@
     }
 });
 
-        // ===================================================================
-        // ⭐⭐⭐ الخطوة 3: تصحيح التسجيل عبر الإيميل ⭐⭐⭐
-        // ===================================================================
         emailForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const name = document.getElementById('signup-name').value;
@@ -172,9 +166,7 @@
             }
         });
         
-        // ===================================================================
-        // ⭐⭐⭐ الخطوة 4: تبسيط التحقق عند تحميل الصفحة ⭐⭐⭐
-        // ===================================================================
+        
         window.onload = async () => {
             try {
                 await account.get();
