@@ -1,0 +1,772 @@
+<!-- user-info.html -->
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informations de l'utilisateur - BioTerms</title>
+    <link rel="shortcut icon" type="x-icon" href="Logo.png">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/sharp-solid.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.8/css/sharp-light.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+            color: #111;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 90%;
+            max-width: 450px; /* للحفاظ على عرض مناسب على الشاشات الكبيرة */
+            text-align: center;
+            position: relative;
+        }
+
+        .profile-section {
+            position: relative;
+            display: inline-block; /* أو flex إذا كنت تريد محاذاة أفضل للعناصر الداخلية */
+            margin-bottom: 20px; /* قللت الهامش قليلاً */
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            border: 3px solid #eee; /* إضافة حدود بسيطة */
+        }
+
+        .profile-image:hover {
+            transform: scale(1.05);
+            border-color: #ccc;
+        }
+
+        .user-info-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 12px 0; /* قللت الهامش قليلاً */
+            color: #111;
+            word-break: break-all; /* لمنع تجاوز النص الطويل */
+        }
+
+        .user-name {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .user-name:hover {
+            background-color: #f0f0f0;
+        }
+
+        .edit-input {
+            width: calc(100% - 22px); /* تعديل العرض ليناسب الحشوة والحدود */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 0 10px; /* إضافة بعض الحشوة الأفقية */
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.85em; /* تصغير الخط قليلاً */
+        }
+
+        .account-management {
+            margin-top: 25px; /* قللت الهامش قليلاً */
+        }
+
+        .management-button {
+            background-color: white;
+            color: #000;
+            border: 1px solid #000;
+            padding: 10px 20px; /* قللت الحشوة قليلاً */
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .management-button:hover {
+            background-color: #000;
+            color: white;
+        }
+
+        .password-form {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .password-form input {
+            width: calc(100% - 22px); /* تعديل العرض */
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        #loadingIndicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px; /* أو اجعلها تغطي الكارت بالكامل */
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .error-message {
+            color: #D8000C; /* لون أحمر أوضح للخطأ */
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 4px;
+            background-color: #FFD2D2; /* خلفية أفتح للخطأ */
+            border: 1px solid #D8000C;
+            display: none;
+            text-align: left;
+        }
+
+        .back-icon {
+            position: absolute;
+            top: 15px; /* تعديل الموضع قليلاً */
+            right: 15px;
+            font-size: 22px; /* تصغير الأيقونة قليلاً */
+            cursor: pointer;
+            color: #555; /* لون أغمق قليلاً */
+            transition: color 0.3s ease;
+            padding: 5px; /* زيادة مساحة النقر */
+        }
+
+        .back-icon:hover {
+            color: #000;
+        }
+
+        /* أنماط المودال (النافذة المنبثقة) لخيارات الصور */
+        .profile-modal {
+    display: none; /* مخفي افتراضيًا */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* لا تضع display: flex هنا، سيتم إضافته بواسطة JavaScript */
+    align-items: center; /* هذه ستعمل عندما يكون display: flex */
+    justify-content: center; /* هذه ستعمل عندما يكون display: flex */
+}
+
+        .profile-modal-content {
+            background-color: #fefefe;
+            /* margin: 5% auto; /* أزلتها لأن flex سيتولى التوسيط */
+            padding: 20px 25px 25px 25px; /* تعديل الحشوة */
+            border: 1px solid #ddd;
+            width: 90%;
+            max-width: 500px; /* عرض أقصى للمودال */
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .profile-modal-close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 8px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1; /* لتحسين المحاذاة الرأسية */
+        }
+
+        .profile-modal-close-btn:hover,
+        .profile-modal-close-btn:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        .profile-modal-content h2 {
+            margin-top: 0; /* إزالة الهامش العلوي إذا كان زر الإغلاق في الأعلى */
+            margin-bottom: 20px;
+            font-size: 1.4em; /* تعديل حجم الخط */
+            color: #333;
+        }
+
+        .profile-modal-image-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px; /* تعديل المسافة */
+            margin-top: 15px;
+            max-height: 350px; /* زيادة الارتفاع الأقصى قليلاً */
+            overflow-y: auto;
+            padding: 10px 5px; /* تعديل الحشوة */
+        }
+
+        .profile-image-option {
+            width: 65px; /* تعديل الحجم قليلاً */
+            height: 65px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s ease-in-out; /* تسريع الانتقال قليلاً */
+        }
+
+        .profile-image-option:hover {
+            border-color: #555;
+            transform: scale(1.07);
+        }
+
+        /* تخصيص شريط التمرير (اختياري) */
+        .profile-modal-image-options::-webkit-scrollbar {
+            width: 6px;
+        }
+        .profile-modal-image-options::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .profile-modal-image-options::-webkit-scrollbar-thumb {
+            background: #a0a0a0;
+            border-radius: 10px;
+        }
+        .profile-modal-image-options::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+
+        #modalImageOptionsLoading {
+            font-size: 0.9em;
+            color: #777;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="profileImageModal" class="profile-modal"> <!-- style="display: none;" يتم التحكم به عبر JS -->
+        <div class="profile-modal-content">
+            <span class="profile-modal-close-btn">×</span>
+            <h2>Choisissez une nouvelle photo de profil</h2>
+            <div id="modalImageOptionsLoading" style="text-align:center; margin:20px 0; display:none;">Chargement des options...</div>
+            <div class="profile-modal-image-options">
+                <!-- خيارات الصور سيتم ملؤها هنا بواسطة JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div id="loadingIndicator">Chargement en cours...</div>
+        <div id="userInfoContainer" style="display:none;">
+            <div class="profile-section">
+                <img id="profileImage" src="Logo.png" alt="Photo de profil" class="profile-image">
+                <!-- تم إزالة حاوية الخيارات من هنا -->
+            </div>
+
+            <div class="user-info-line">
+                <span id="userNameDisplay" class="user-name"></span>
+            </div>
+
+            <div id="editNameContainer" style="display:none;">
+                <input type="text" id="newNameInput" class="edit-input" placeholder="Nouveau nom" required>
+            </div>
+
+            <div class="user-info-line">
+                <span id="userEmail"></span>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-value" id="savedConceptsCount">0</div>
+                    <div class="stat-label">Concepts sauvegardés</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="openConceptsCount">0</div>
+                    <div class="stat-label">Concepts ouverts</div>
+                </div>
+            </div>
+
+            <div class="account-management">
+                <button id="changePasswordBtn" class="management-button">Changer le mot de passe</button>
+                <button id="deleteAccountBtn" class="management-button">Supprimer le compte</button>
+
+                <form id="changePasswordForm" class="password-form">
+                    <input type="password" id="currentPasswordInput" placeholder="Mot de passe actuel" required>
+                    <input type="password" id="newPasswordInput" placeholder="Nouveau mot de passe" required>
+                    <input type="password" id="confirmPasswordInput" placeholder="Confirmer le nouveau mot de passe" required>
+                    <button type="submit" class="management-button">Mettre à jour le mot de passe</button>
+                </form>
+            </div>
+
+            <i class="fa-light fa-arrow-left back-icon" onclick="window.location.href='app.html'"></i>
+        </div>
+        <div id="errorContainer" class="error-message"></div>
+    </div>
+
+        
+
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@16.0.2"></script>
+    <script>
+        const client = new Appwrite.Client();
+       
+        
+        client.setEndpoint("https://fra.cloud.appwrite.io/v1")
+          .setProject("66bdd9ef0022a854dccc");
+
+        const account = new Appwrite.Account(client);
+        const storage = new Appwrite.Storage(client);
+        const databases = new Appwrite.Databases(client);
+
+        const BUCKET_ID = '673f0e8f0031d1df2e9b';
+        const USER_CONCEPTS_COLLECTION = '676dbc8e00107e180a0c';
+        const DATABASE_ID = '66bddcb3002ce9c16742';
+        const bookmarks_collection = '67607e0c0013805dde72';
+
+        const profileModal = document.getElementById('profileImageModal');
+        const modalCloseBtn = document.querySelector('.profile-modal-close-btn');
+        const mainProfileImageElement = document.getElementById('profileImage');
+
+        if (profileModal) {
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === "attributes" && mutation.attributeName === "style") {
+                        console.warn("MutationObserver: profileModal style changed!", profileModal.style.cssText);
+                        // يمكنك إضافة console.trace() هنا لمعرفة مكدس الاستدعاء
+                        // console.trace("Stack trace for style change");
+                    }
+                });
+            });
+            observer.observe(profileModal, {
+                attributes: true // مراقبة تغييرات السمات (بما في ذلك style)
+            });
+            console.log("MutationObserver set up for profileModal style changes.");
+        }
+
+        function openProfileImageModal() {
+            console.log("openProfileImageModal CALLED");
+            if (profileModal) {
+                console.log("profileModal element found. Current display (computed):", window.getComputedStyle(profileModal).display, "Current inline style display:", profileModal.style.display);
+                const modalOptionsContainer = profileModal.querySelector('.profile-modal-image-options');
+                if (modalOptionsContainer && modalOptionsContainer.children.length === 0) {
+                    console.log("Modal options not loaded, calling loadProfileImageOptions.");
+                    if (typeof loadProfileImageOptions === 'function') {
+                        loadProfileImageOptions();
+                    }
+                }
+                profileModal.style.display = 'flex';
+                console.log("profileModal display SET TO 'flex'");
+            } else {
+                console.error("profileModal element NOT found when trying to open!");
+            }
+        }
+
+        function closeProfileImageModal() {
+            console.log("closeProfileImageModal CALLED");
+            if (profileModal) {
+                profileModal.style.display = 'none';
+                console.log("profileModal display SET TO 'none'");
+            } else {
+                console.error("profileModal element NOT found when trying to close!");
+            }
+        }
+
+        if (mainProfileImageElement) {
+            mainProfileImageElement.addEventListener('click', openProfileImageModal);
+        }
+
+        if (modalCloseBtn) {
+            modalCloseBtn.addEventListener('click', closeProfileImageModal);
+        }
+
+        window.addEventListener('click', (event) => {
+            if (event.target === profileModal) {
+                closeProfileImageModal();
+            }
+        });
+
+        async function loadProfileImageOptions() {
+            const optionsContainerDiv = document.querySelector('#profileImageModal .profile-modal-image-options');
+            const loadingIndicator = document.getElementById('modalImageOptionsLoading');
+
+            if (!optionsContainerDiv || !loadingIndicator) {
+                console.error("Modal profile image options container or loading indicator not found.");
+                return;
+            }
+
+            optionsContainerDiv.innerHTML = '';
+            loadingIndicator.style.display = 'block';
+            // console.log("loadProfileImageOptions (Modal): Cleared options, showing loading indicator.");
+
+            try {
+                const fileList = await storage.listFiles(BUCKET_ID);
+                // console.log("loadProfileImageOptions (Modal): Fetched fileList, count:", fileList.files.length);
+
+                if (fileList.files.length === 0) {
+                    optionsContainerDiv.innerHTML = '<p>Aucune option d\'image disponible.</p>';
+                    if (loadingIndicator) loadingIndicator.style.display = 'none';
+                    return;
+                }
+
+                for (const file of fileList.files) {
+                    try {
+                        const imageUrlString = await storage.getFileView(BUCKET_ID, file.$id);
+                        if (imageUrlString && typeof imageUrlString === 'string' && imageUrlString.startsWith('http')) {
+                            const imgOption = document.createElement('img');
+                            imgOption.src = imageUrlString;
+                            imgOption.alt = `Option ${file.name}`;
+                            imgOption.classList.add('profile-image-option');
+                            imgOption.setAttribute('data-id', file.$id);
+
+                            imgOption.addEventListener('click', async () => {
+                                await updateProfileImage(file.$id);
+                                closeProfileImageModal();
+                            });
+                            optionsContainerDiv.appendChild(imgOption);
+                        } else {
+                            console.warn(`Image URL is invalid for file ${file.$id}. Skipping.`);
+                        }
+                    } catch (fileViewError) {
+                        console.error(`Erreur getFileView for ${file.$id}:`, fileViewError);
+                    }
+                }
+                // console.log("loadProfileImageOptions (Modal): Finished processing files.");
+
+            } catch (error) {
+                console.error('Erreur générale loadProfileImageOptions (Modal):', error);
+                if (optionsContainerDiv) optionsContainerDiv.innerHTML = '<p>Erreur de chargement.</p>';
+                if (typeof handleError === 'function') {
+                    handleError(new Error('Impossible de charger les options (Modal).'));
+                }
+            } finally {
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+                // console.log("loadProfileImageOptions (Modal): Hid loading indicator.");
+            }
+        }
+
+        async function loadUserInfo() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const userInfoContainer = document.getElementById('userInfoContainer');
+            const errorContainer = document.getElementById('errorContainer');
+
+            try {
+                if (loadingIndicator) loadingIndicator.style.display = 'flex';
+                if (userInfoContainer) userInfoContainer.style.display = 'none';
+                if (errorContainer) errorContainer.style.display = 'none';
+
+                // console.log("loadUserInfo: Fetching user account details...");
+                const user = await account.get();
+                // console.log("loadUserInfo: User account details fetched:", user);
+
+                let profileImageSrc = 'Logo.png';
+                // const profileImageElement = document.getElementById('profileImage'); // تم تعريفه عالميًا كـ mainProfileImageElement
+
+                if (user.prefs && user.prefs.profilePictureId) {
+                    // console.log("loadUserInfo: User has profilePictureId:", user.prefs.profilePictureId);
+                    try {
+                        const imageUrlString = await storage.getFileView(BUCKET_ID, user.prefs.profilePictureId);
+                        // console.log("loadUserInfo: Fetched main profile image URL string:", imageUrlString);
+                        if (imageUrlString && typeof imageUrlString === 'string' && imageUrlString.startsWith('http')) {
+                            profileImageSrc = imageUrlString;
+                        } else {
+                            // console.warn("loadUserInfo: Main profile image URL string is invalid, using default. URL:", imageUrlString);
+                        }
+                    } catch (storageError) {
+                        console.error('loadUserInfo: Erreur lors du chargement de l\'image de profil principale:', storageError);
+                    }
+                } else {
+                    // console.log("loadUserInfo: User has no profilePictureId in prefs, using default image (Logo.png).");
+                }
+
+                if (mainProfileImageElement) {
+                    // console.log("loadUserInfo: Setting #profileImage src to:", profileImageSrc);
+                    mainProfileImageElement.src = profileImageSrc;
+                    mainProfileImageElement.alt = user.name || "Photo de profil";
+                } else {
+                    console.error("loadUserInfo: #profileImage element not found in DOM.");
+                }
+
+                const userNameDisplayElement = document.getElementById('userNameDisplay');
+                const userEmailElement = document.getElementById('userEmail');
+                if (userNameDisplayElement) userNameDisplayElement.textContent = user.name || 'Non défini';
+                if (userEmailElement) userEmailElement.textContent = user.email;
+
+                // console.log("loadUserInfo: Fetching concept statistics...");
+                try {
+                    const savedConceptsPromise = databases.listDocuments(DATABASE_ID, bookmarks_collection, [Appwrite.Query.equal('userId', user.$id)]);
+                    const openConceptsPromise = databases.listDocuments(DATABASE_ID, USER_CONCEPTS_COLLECTION, [Appwrite.Query.equal('userId', user.$id)]);
+                    const [savedConcepts, openConcepts] = await Promise.all([savedConceptsPromise, openConceptsPromise]);
+                    const savedConceptsCountElement = document.getElementById('savedConceptsCount');
+                    const openConceptsCountElement = document.getElementById('openConceptsCount');
+                    if (savedConceptsCountElement) savedConceptsCountElement.textContent = savedConcepts.total;
+                    if (openConceptsCountElement) openConceptsCountElement.textContent = openConcepts.total;
+                } catch (statsError) {
+                    console.error('loadUserInfo: Erreur lors du chargement des statistiques des concepts:', statsError);
+                    // ...
+                }
+
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+                if (userInfoContainer) userInfoContainer.style.display = 'block';
+                // console.log("loadUserInfo: Finished. UI should be visible.");
+
+            } catch (error) {
+                console.error('Erreur générale dans loadUserInfo:', error);
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+                if (userInfoContainer) userInfoContainer.style.display = 'none';
+                if (errorContainer) {
+                    errorContainer.textContent = error.message || 'Une erreur s\'est produite.';
+                    errorContainer.style.display = 'block';
+                }
+                // ...
+            }
+        }
+
+        async function updateProfileImage(imageId) {
+            // console.log(`updateProfileImage called with imageId: ${imageId}`);
+            try {
+                await account.updatePrefs({ profilePictureId: imageId });
+                const newImageUrlString = await storage.getFileView(BUCKET_ID, imageId);
+
+                if (newImageUrlString && typeof newImageUrlString === 'string' && newImageUrlString.startsWith('http')) {
+                    if (mainProfileImageElement) {
+                        mainProfileImageElement.src = newImageUrlString;
+                    }
+                } else {
+                    console.error("Failed to get a valid new image URL string for main profile image.");
+                    if (typeof handleError === 'function') handleError(new Error("لم يتمكن من تحديث الصورة الرئيسية."));
+                    return;
+                }
+
+                if (window.opener && typeof window.opener.triggerUserIconUpdate === 'function') {
+                    window.opener.triggerUserIconUpdate();
+                } else if (window.opener) {
+                    window.opener.location.reload();
+                }
+            } catch (error) {
+                console.error("Error in updateProfileImage:", error);
+                if (typeof handleError === 'function') handleError(error);
+            }
+        }
+
+        function handleError(error) {
+            console.error('Erreur:', error);
+            const errorContainer = document.getElementById('errorContainer');
+            if (errorContainer) { // تحقق من وجود العنصر قبل استخدامه
+                errorContainer.textContent = error.message || 'Une erreur s\'est produite';
+                errorContainer.style.display = 'block';
+                setTimeout(() => {
+                    errorContainer.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            account.get()
+                .then(response => {
+                    loadUserInfo();
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la vérification de la connexion:', error);
+                    window.location.href = 'login.html';
+                });
+        });
+
+        // باقي الدوال (validatePassword, updateOpenConceptsCount, sanitizeInput, updateUsername, deleteUserConcepts, deleteAccountBtn listener) تبقى كما هي
+        // Gestionnaire de clic sur le nom d'utilisateur
+        document.getElementById('userNameDisplay').addEventListener('click', () => {
+            const editContainer = document.getElementById('editNameContainer');
+            const nameInput = document.getElementById('newNameInput');
+            nameInput.value = document.getElementById('userNameDisplay').textContent;
+            editContainer.style.display = 'block';
+        });
+
+        // Gestionnaire de saisie du nom
+        document.getElementById('newNameInput').addEventListener('keyup', async (e) => {
+            if (e.key === 'Enter') {
+                updateUsername(e.target.value); // تأكد أن updateUsername معرفة
+            }
+        });
+
+        // Gestionnaire de changement de mot de passe
+        document.getElementById('changePasswordBtn').addEventListener('click', () => {
+            const form = document.getElementById('changePasswordForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const currentPassword = document.getElementById('currentPasswordInput').value;
+            const newPassword = document.getElementById('newPasswordInput').value;
+            const confirmPassword = document.getElementById('confirmPasswordInput').value;
+
+            if (newPassword !== confirmPassword) {
+                handleError(new Error('Les nouveaux mots de passe ne correspondent pas'));
+                return;
+            }
+            try {
+                await account.updatePassword(newPassword, currentPassword);
+                document.getElementById('changePasswordForm').style.display = 'none';
+                document.getElementById('changePasswordForm').reset();
+                alert('Mot de passe mis à jour avec succès');
+            } catch (error) {
+                handleError(error);
+            }
+        });
+        
+        // Fermer les options d'image en cliquant à l'extérieur (هذا لم يعد ضروريًا للمودال)
+        /*
+        document.addEventListener('click', (e) => {
+            // ...
+        });
+        */
+
+        // Fermer le champ de modification du nom en cliquant à l'extérieur
+        document.addEventListener('click', (e) => {
+            const editNameContainer = document.getElementById('editNameContainer');
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            if (editNameContainer && userNameDisplay && editNameContainer.style.display === 'block') { // تحقق من الرؤية
+                if (!editNameContainer.contains(e.target) && !userNameDisplay.contains(e.target)) {
+                    editNameContainer.style.display = 'none';
+                }
+            }
+        });
+
+        const passwordForm = document.getElementById('changePasswordForm');
+        const newPasswordInput = document.getElementById('newPasswordInput');
+        const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+
+        function validatePassword() {
+            if (newPasswordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordInput.setCustomValidity('Les mots de passe ne correspondent pas');
+            } else {
+                confirmPasswordInput.setCustomValidity('');
+            }
+        }
+        if(newPasswordInput && confirmPasswordInput) { // تحقق من وجود العناصر
+            newPasswordInput.addEventListener('change', validatePassword);
+            confirmPasswordInput.addEventListener('keyup', validatePassword);
+        }
+
+
+        async function updateOpenConceptsCount(userId) {
+            try {
+                const response = await databases.listDocuments(
+                    DATABASE_ID,
+                    USER_CONCEPTS_COLLECTION,
+                    [Appwrite.Query.equal('userId', userId)]
+                );
+                const openConceptsCountElement = document.getElementById('openConceptsCount');
+                if(openConceptsCountElement) openConceptsCountElement.textContent = response.total;
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour du compteur de concepts ouverts:', error);
+            }
+        }
+
+        function sanitizeInput(input) {
+            return input.trim().replace(/[<>]/g, '');
+        }
+
+        async function updateUsername(newName) {
+            const sanitizedName = sanitizeInput(newName);
+            if (sanitizedName.length < 1) {
+                handleError(new Error('Le nom ne peut pas être vide'));
+                return;
+            }
+            try {
+                const updatedUser = await account.updateName(sanitizedName);
+                const userNameDisplayElement = document.getElementById('userNameDisplay');
+                const editNameContainer = document.getElementById('editNameContainer');
+                if(userNameDisplayElement) userNameDisplayElement.textContent = updatedUser.name;
+                if(editNameContainer) editNameContainer.style.display = 'none';
+            } catch (error) {
+                handleError(error);
+            }
+        }
+        
+        async function deleteUserConcepts(userId) {
+            try {
+                const savedConcepts = await databases.listDocuments(DATABASE_ID, bookmarks_collection, [Appwrite.Query.equal('userId', userId)]);
+                for (const concept of savedConcepts.documents) {
+                    await databases.deleteDocument(DATABASE_ID, bookmarks_collection, concept.$id);
+                }
+                const openConcepts = await databases.listDocuments(DATABASE_ID, USER_CONCEPTS_COLLECTION, [Appwrite.Query.equal('userId', userId)]);
+                for (const concept of openConcepts.documents) {
+                    await databases.deleteDocument(DATABASE_ID, USER_CONCEPTS_COLLECTION, concept.$id);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la suppression des concepts:', error);
+                throw error;
+            }
+        }
+
+        const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+        if (deleteAccountBtn) {
+            deleteAccountBtn.addEventListener('click', async () => {
+                const confirmDelete = confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.');
+                if (confirmDelete) {
+                    const password = prompt('Pour confirmer la suppression, veuillez entrer votre mot de passe :');
+                    if (password) {
+                        try {
+                            const user = await account.get();
+                            await deleteUserConcepts(user.$id);
+                            await account.deleteSession('current');
+                            await account.delete(password);
+                            alert('Votre compte a été supprimé avec succès.');
+                            window.location.href = 'login.html';
+                        } catch (error) {
+                            let errorMessage = 'Une erreur est survenue lors de la suppression du compte.';
+                            if (error.code === 401) { // Appwrite قد يرجع 401 لكلمة مرور خاطئة عند الحذف
+                                errorMessage = 'Mot de passe incorrect.';
+                            }
+                            handleError(new Error(errorMessage));
+                        }
+                    }
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>

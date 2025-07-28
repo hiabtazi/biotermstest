@@ -1,0 +1,247 @@
+<!-- login.html (النسخة المصححة) -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - BioTerms</title>
+    <link rel="shortcut icon" type="x-icon" href="Logo.png">
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@16.0.2"></script>
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+    <style>
+        /* CSS ديالك كيبقى كيفما هو */
+        :root { --primary-color: #000000; --background-color: #f8f8f8; --text-color: #333333; --border-color: #e0e0e0; --hover-color: #f5f5f5; --shadow-color: rgba(0, 0, 0, 0.1); } * { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: 'Segoe UI', Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: var(--background-color); color: var(--text-color); line-height: 1.6; } .login-container { background-color: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 8px 24px var(--shadow-color); width: 90%; max-width: 420px; text-align: center; } h1 { font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--primary-color); font-weight: 600; } .logo { width: 100px; height: auto; margin: 0 auto 1.5rem; display: block; } .btn-primary, .google-btn { background-color: white; color: var(--primary-color); border: 2px solid var(--primary-color); padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: 500; margin: 12px 0; width: 100%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px; } .btn-primary:hover, .google-btn:hover { background-color: var(--primary-color); color: white; } .btn-primary:disabled { background-color: #cccccc; border-color: #cccccc; color: #666666; cursor: not-allowed; } .input-group { position: relative; margin-bottom: 20px; text-align: left; } .input-group input { width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; } .input-group input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1); } .input-group .toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-color); } .divider { display: flex; align-items: center; margin: 24px 0; color: #aaa; } .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background-color: var(--border-color); } .divider span { padding: 0 12px; } .links-container { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; } .link { color: var(--primary-color); text-decoration: none; font-size: 0.9rem; } .link:hover { text-decoration: underline; } .toast { position: fixed; top: 20px; right: 20px; transform: translateX(120%); background-color: white; padding: 16px 30px; border-radius: 8px; display: flex; align-items: center; gap: 12px; opacity: 0; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 1000; min-width: 250px; } .toast.success { border-left: 4px solid #2ecc71; } .toast.error { border-left: 4px solid #e74c3c; } .toast.warning { border-left: 4px solid #f39c12; } .toast.info { border-left: 4px solid #3498db; } .toast i { font-size: 20px; } .toast.success i { color: #2ecc71; } .toast.error i { color: #e74c3c; } .toast.warning i { color: #f39c12; } .toast.info i { color: #3498db; } .toast.show { opacity: 1; transform: translateX(0); }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Bienvenue sur BioTerms</h1>
+        <img src="logo.png" alt="Logo BioTerms" class="logo">
+        
+        <form id="email-login-form">
+            <div class="input-group">
+                <input type="email" id="login-email" placeholder="Votre adresse email" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="login-password" placeholder="Mot de passe" required>
+                <i id="toggle-password-btn" class="toggle-password fa-light fa-eye"></i>
+            </div>
+            <button type="submit" id="login-submit-btn" class="btn-primary">Se connecter</button>
+        </form>
+
+        <div class="links-container">
+            <a href="forgot-password.html" class="link">Mot de passe oublié ?</a>
+            <a href="signup.html" class="link">Créer un compte</a>
+        </div>
+
+        <div class="divider"><span>ou</span></div>
+
+        <button id="google-login-btn" class="google-btn">
+            <i class="fab fa-google"></i> Se connecter avec Google
+        </button>
+        
+        <div id="toast" class="toast">
+            <i class="fas fa-info-circle"></i>
+            <span id="toast-message"></span>
+        </div>
+    </div>
+
+    <script>
+        // ===================================================================
+// ⭐ الحل الكامل لمشكلة SSL و Appwrite ⭐
+// ===================================================================
+
+const { Client, Account, AppwriteException } = Appwrite;
+const client = new Client();
+
+// --- إعدادات Appwrite المُصححة ---
+client
+    .setEndpoint("https://cloud.appwrite.io/v1")  // استخدم الرابط الصحيح لـ Appwrite Cloud
+    .setProject("66bdd9ef0022a854dccc");          // الـ Project ID الخاص بك
+
+const account = new Account(client);
+
+// --- عناصر الواجهة ---
+const emailForm = document.getElementById('email-login-form');
+const submitBtn = document.getElementById('login-submit-btn');
+const googleBtn = document.getElementById('google-login-btn');
+const togglePasswordBtn = document.getElementById('toggle-password-btn');
+
+// --- دالة إظهار الرسائل ---
+function showToast(message, type = 'info') {
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+    const icon = toast.querySelector('i');
+    toast.className = 'toast';
+    icon.className = 'fas';
+    
+    const toastTypes = { 
+        'success': { class: 'success', icon: 'fa-check-circle' }, 
+        'error': { class: 'error', icon: 'fa-exclamation-circle' }, 
+        'warning': { class: 'warning', icon: 'fa-exclamation-triangle' } 
+    };
+    
+    const currentType = toastTypes[type] || { class: 'info', icon: 'fa-info-circle' };
+    toast.classList.add(currentType.class); 
+    icon.classList.add(currentType.icon);
+    toastMessage.textContent = message;
+    toast.classList.add('show');
+    
+    setTimeout(() => { 
+        toast.classList.remove('show'); 
+    }, 5000);
+}
+
+// --- إظهار/إخفاء كلمة المرور ---
+togglePasswordBtn.addEventListener('click', () => {
+    const passwordInput = document.getElementById('login-password');
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        togglePasswordBtn.classList.remove('fa-eye');
+        togglePasswordBtn.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        togglePasswordBtn.classList.remove('fa-eye-slash');
+        togglePasswordBtn.classList.add('fa-eye');
+    }
+});
+
+// --- دالة للتحقق من حالة الاتصال ---
+async function checkConnection() {
+    try {
+        await account.get();
+        return true;
+    } catch (error) {
+        if (error.code === 401) {
+            return false; // غير مسجل دخول - وهذا طبيعي
+        }
+        console.error('Connection error:', error);
+        return false;
+    }
+}
+
+// --- تسجيل الدخول عبر الإيميل ---
+emailForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    // التحقق من صحة المدخلات
+    if (!email || !password) {
+        showToast('Veuillez remplir tous les champs.', 'error');
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Connexion...';
+    
+    try {
+        // إنشاء جلسة جديدة
+        const session = await account.createEmailPasswordSession(email, password);
+        console.log('Session created:', session);
+        
+        // الحصول على معلومات المستخدم
+        const user = await account.get();
+        console.log('User info:', user);
+        
+        // التحقق من تأكيد الإيميل
+        if (user.emailVerification) {
+            showToast('Connexion réussie !', 'success');
+            setTimeout(() => {
+                window.location.href = 'app.html';
+            }, 1500);
+        } else {
+            showToast("Votre email n'est pas vérifié. Un code OTP va être envoyé.", 'warning');
+            
+            try {
+                // إرسال رمز التحقق
+                await account.createVerification('https://your-domain.com/verify.html');
+                
+                // حفظ المعلومات للتحقق
+                sessionStorage.setItem('userIdForVerification', user.$id); 
+                sessionStorage.setItem('emailForVerification', user.email); 
+                
+                setTimeout(() => {
+                    window.location.href = 'verify.html';
+                }, 2500);
+                
+            } catch (verifyError) {
+                console.error('Verification error:', verifyError);
+                showToast("Erreur lors de l'envoi du code de vérification.", 'error');
+            }
+        }
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        
+        let errorMessage = "Échec de la connexion. Vérifiez votre connexion internet.";
+        
+        if (error instanceof AppwriteException) {
+            switch (error.code) {
+                case 401:
+                    errorMessage = "Email ou mot de passe incorrect.";
+                    break;
+                case 429:
+                    errorMessage = "Trop de tentatives. Essayez plus tard.";
+                    break;
+                case 500:
+                    errorMessage = "Erreur serveur. Essayez plus tard.";
+                    break;
+                default:
+                    errorMessage = `Erreur: ${error.message}`;
+            }
+        } else if (error.message.includes('Failed to fetch')) {
+            errorMessage = "Problème de connexion. Vérifiez votre internet.";
+        }
+        
+        showToast(errorMessage, 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Se connecter';
+    }
+});
+
+// --- تسجيل الدخول عبر جوجل ---
+googleBtn.addEventListener('click', async () => {
+    try {
+        // التحقق من الاتصال أولاً
+        showToast('Redirection vers Google...', 'info');
+        
+        await account.createOAuth2Session(
+            'google',
+            `${window.location.origin}/app.html`,      // نجاح تسجيل الدخول
+            `${window.location.origin}/login.html`      // فشل تسجيل الدخول
+        );
+        
+    } catch (error) {
+        console.error('Google login error:', error);
+        showToast("Échec de la connexion via Google.", 'error');
+    }
+});
+
+// --- التحقق من الجلسة الحالية عند تحميل الصفحة ---
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const user = await account.get();
+        if (user) {
+            console.log('User already logged in:', user);
+            // إذا كان المستخدم مسجل دخول، وجهه للتطبيق
+            window.location.href = 'app.html';
+        }
+    } catch (error) {
+        // المستخدم غير مسجل دخول - وهذا طبيعي في صفحة تسجيل الدخول
+        console.log('User is not logged in. Login page loaded correctly.');
+    }
+});
+
+// --- معالجة الأخطاء العامة ---
+window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+    if (event.reason.message && event.reason.message.includes('Failed to fetch')) {
+        showToast('مشكلة في الاتصال بالخادم. تحقق من الإنترنت.', 'error');
+    }
+});
+    </script>
+</body>
+</html>

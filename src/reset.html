@@ -1,0 +1,199 @@
+<!-- reset.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réinitialisation du mot de passe - BioTerms</title>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@16.0.2"></script>
+    <link rel="stylesheet"
+            href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-rounded/css/uicons-regular-rounded.css">
+        <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-thin-rounded/css/uicons-thin-rounded.css">
+        <link rel="stylesheet"
+            href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-straight/css/uicons-regular-straight.css">
+        <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.4.2/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+        <link rel="stylesheet" data-purpose="Layout StyleSheet" title="Web Awesome" href="/css/app-wa-cc491567646eab1188c6538ebc462e7d.css?vsn=d">
+      <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+      <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/sharp-solid.css">
+      <link rel="styloshoot"
+      href="https://site-assets.fontawesome.com/releases/v5.4.0/css/sharp-regular.css">
+      <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.8/css/sharp-light.css">
+      <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .reset-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .reset-btn {
+            background-color: white;
+            color: black;
+            border: 2px solid black;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .reset-btn:hover {
+            background-color: black;
+            color: white;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .input-group input {
+            width: calc(100% - 40px);
+            padding: 10px;
+            padding-right: 30px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .input-group .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+        }
+        #status {
+            margin-top: 1rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="reset-container">
+    <h1>Définir un nouveau mot de passe</h1>
+    <form id="reset-form">
+        
+        <!-- ⭐ تعديل 1: إضافة حقل الإيميل -->
+        <div class="input-group">
+            <input type="email" id="email" placeholder="Votre adresse email" required>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="new-password" placeholder="Nouveau mot de passe" required>
+            <i class="toggle-password fa-solid fa-eye" onclick="togglePassword('new-password')"></i>
+        </div>
+        <div class="input-group">
+            <input type="password" id="confirm-password" placeholder="Confirmez le mot de passe" required>
+            <i class="toggle-password fa-solid fa-eye" onclick="togglePassword('confirm-password')"></i>
+        </div>
+        <button type="submit" class="reset-btn">Réinitialiser et se connecter</button>
+    </form>
+    <div id="status"></div>
+</div>
+    
+
+<script>
+    const { Client, Account, AppwriteException } = Appwrite;
+    const client = new Client();
+    const account = new Account(client);
+
+    client
+        .setEndpoint("https://fra.cloud.appwrite.io/v1")
+        .setProject("66bdd9ef0022a854dccc");
+
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = input.nextElementSibling;
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const secret = urlParams.get('secret');
+        const userId = urlParams.get('userId');
+        const statusDiv = document.getElementById('status');
+
+        if (!secret || !userId) {
+            statusDiv.style.color = 'red';
+            statusDiv.textContent = "Lien de réinitialisation invalide ou expiré.";
+            document.getElementById('reset-form').style.display = 'none';
+            return;
+        }
+
+        document.getElementById('reset-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            // جلب قيمة الإيميل من الحقل الجديد
+            const email = document.getElementById('email').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (newPassword !== confirmPassword) {
+                statusDiv.style.color = 'red';
+                statusDiv.textContent = "Les mots de passe ne correspondent pas.";
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                statusDiv.style.color = 'red';
+                statusDiv.textContent = "Le mot de passe doit contenir au moins 8 caractères.";
+                return;
+            }
+
+            try {
+                // الخطوة 1: تحديث كلمة المرور
+                await account.updateRecovery(userId, secret, newPassword);
+                
+                statusDiv.style.color = 'blue';
+                statusDiv.textContent = "Mot de passe mis à jour. Connexion en cours...";
+
+                // ⭐ تعديل 2: تسجيل الدخول مباشرة بعد التحديث
+                await account.createEmailPasswordSession(email, newPassword);
+                
+                // الخطوة 3: التوجيه إلى app.html بعد تسجيل الدخول بنجاح
+                statusDiv.style.color = 'green';
+                statusDiv.textContent = "Connexion réussie ! Redirection...";
+                
+                setTimeout(() => {
+                    window.location.href = 'app.html'; // التوجيه للصفحة الرئيسية
+                }, 1500);
+
+            } catch (error) {
+                console.error('Password reset or login error:', error);
+                statusDiv.style.color = 'red';
+                let errorMessage = "Une erreur est survenue. Veuillez réessayer.";
+                if (error instanceof AppwriteException) {
+                    if (error.type === 'user_invalid_credentials') {
+                        errorMessage = "L'email est incorrect. Veuillez utiliser le même email que celui de la demande de réinitialisation.";
+                    } else if (error.message.includes('expired')) {
+                         errorMessage = "Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.";
+                    }
+                }
+                statusDiv.textContent = errorMessage;
+            }
+        });
+    });
+</script>
+</body>
+</html>

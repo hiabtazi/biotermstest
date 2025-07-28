@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Utilisateur - BioTerms</title>
+    <link rel="shortcut icon" type="x-icon" href="Logo.png">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-thin-rounded/css/uicons-thin-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-straight/css/uicons-regular-straight.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.4.2/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel="stylesheet" data-purpose="Layout StyleSheet" title="Web Awesome" href="/css/app-wa-cc491567646eab1188c6538ebc462e7d.css?vsn=d">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/sharp-solid.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.8/css/sharp-light.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <style>
+        :root {
+            --background-color: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: Arial, sans-serif;
+            /* transition: background-color 0.3s, color 0.3s; */
+        }
+
+        body.dark-mode {
+            --background-color: #333333;
+            --text-color: #ffffff;
+        }
+
+        header {
+            background-color: var(--background-color);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .guide-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background-color: var(--background-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .guide-section h2 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-list i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .guide-section {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="Logo Light Mode.png" alt="BioTerms Logo" class="logo-img light-mode-logo">
+            <img src="Logo Dark Mode.png" alt="BioTerms Logo" class="logo-img dark-mode-logo" style="display: none;">
+            <h1>Guide Utilisateur</h1>
+        </div>
+        <div class="header-icons">
+            <button class="theme-toggle" title="Changer le thème">
+                <i class="fa-light fa-moon"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="guide-section">
+            <h2>Page d'Accueil</h2>
+            <ul class="feature-list">
+                <li>
+                    <i class="fa-light fa-magnifying-glass"></i>
+                    <span>Recherchez des termes facilement avec la barre de recherche</span>
+                </li>
+                <li>
+                    <i class="fa-light fa-alphabet"></i>
+                    <span>Naviguez par ordre alphabétique avec l'index des lettres</span>
+                </li>
+                <li>
+                    <i class="fa-light fa-key"></i>
+                    <span>Utilisez des clés pour débloquer de nouveaux termes</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="guide-section">
+            <h2>Gestion des Favoris</h2>
+            <ul class="feature-list">
+                <li>
+                    <i class="fa-light fa-bookmark"></i>
+                    <span>Sauvegardez vos termes préférés pour un accès rapide</span>
+                </li>
+                <li>
+                    <i class="fa-light fa-bookmark-slash"></i>
+                    <span>Retirez facilement les termes de vos favoris</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="guide-section">
+            <h2>Profil Utilisateur</h2>
+            <ul class="feature-list">
+                <li>
+                    <i class="fa-light fa-user"></i>
+                    <span>Gérez vos informations personnelles</span>
+                </li>
+                <li>
+                    <i class="fa-light fa-key"></i>
+                    <span>Suivez votre nombre de clés disponibles</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="guide-section">
+            <h2>Mode Sombre/Clair</h2>
+            <ul class="feature-list">
+                <li>
+                    <i class="fa-light fa-moon"></i>
+                    <span>Basculez entre le mode sombre et clair pour un meilleur confort visuel</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour basculer le mode sombre
+        function toggleDarkMode() {
+            const body = document.body;
+            const themeToggle = document.querySelector('.theme-toggle i');
+            const lightModeLogo = document.querySelector('.light-mode-logo');
+            const darkModeLogo = document.querySelector('.dark-mode-logo');
+
+            body.classList.toggle('dark-mode');
+            
+            // Mettre à jour l'icône
+            if (body.classList.contains('dark-mode')) {
+                themeToggle.className = 'fa-light fa-sun-bright';
+                lightModeLogo.style.display = 'none';
+                darkModeLogo.style.display = 'block';
+            } else {
+                themeToggle.className = 'fa-light fa-moon';
+                lightModeLogo.style.display = 'block';
+                darkModeLogo.style.display = 'none';
+            }
+
+            // Sauvegarder la préférence
+            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+        }
+
+        // Initialiser le thème au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.theme-toggle i').className = 'fa-light fa-sun-bright';
+                document.querySelector('.light-mode-logo').style.display = 'none';
+                document.querySelector('.dark-mode-logo').style.display = 'block';
+            }
+
+            // Ajouter l'événement de clic pour le bouton de thème
+            document.querySelector('.theme-toggle').addEventListener('click', toggleDarkMode);
+        });
+    </script>
+</body>
+</html>

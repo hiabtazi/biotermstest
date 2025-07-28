@@ -1,0 +1,732 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un concept</title>
+    <link rel="shortcut icon" type="x-icon" href="src/Logo Dark Mode.png">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-thin-rounded/css/uicons-thin-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-straight/css/uicons-regular-straight.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.4.2/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/sharp-solid.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.8/css/sharp-light.css">
+    <style>
+        :root {
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --form-bg: #fff;
+    --header-bg: #fff;
+    --placeholder-color: #999;
+    --submit-btn-bg: #ffffff;
+    --submit-btn-text: #000000;
+    --submit-btn-hover-bg: #000000;
+    --submit-btn-hover-text: #ffffff;
+}
+
+[data-theme="dark"] {
+    --bg-color: #333;
+    --text-color: #ffffff;
+    --form-bg: #333333;
+    --header-bg: #333333;
+    --placeholder-color-dark: #ccc;
+    --submit-btn-bg: #333;
+    --submit-btn-text: #ffffff;
+    --submit-btn-hover-bg: #ffffff;
+    --submit-btn-hover-text: #333;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styles */
+.header {
+    width: 90%;
+    max-width: 1200px;
+    height: auto;
+    min-height: 85px;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: var(--header-bg);
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.header-title {
+    color: var(--text-color);
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    flex-grow: 1;
+    text-align: center;
+}
+
+/* Container Styles */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    min-height: 550px;
+    margin: 0 auto;
+    background-color: var(--form-bg);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Form Styles */
+.concept-form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+input {
+    height: 50px;
+}
+
+textarea {
+    height: 250px;
+    resize: none;
+}
+
+.submit-btn {
+    height: 50px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    background-color: var(--submit-btn-bg);
+    color: var(--submit-btn-text);
+    border: 1px solid var(--submit-btn-text);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0 20px;
+}
+
+.submit-btn:hover {
+    background-color: var(--submit-btn-hover-bg);
+    color: var(--submit-btn-hover-text);
+}
+
+/* Timer Styles */
+.limit-message {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    height: 100%;
+}
+
+.container.limit-reached .concept-form {
+    display: none;
+}
+
+.container.limit-reached .limit-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.timer-container {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.time-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.time-value {
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-weight: bold;
+    background: linear-gradient(135deg, #6e8efb, #4a6cf7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    min-width: 45px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+}
+
+.time-value::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(135deg, #6e8efb, #4a6cf7);
+    transform-origin: center;
+    transform: scaleX(0);
+    transition: transform 0.3s ease-in-out;
+}
+
+.time-value.animate::after {
+    transform: scaleX(1);
+}
+
+.time-label {
+    font-size: clamp(0.7rem, 2vw, 0.9rem);
+    color: var(--text-color);
+    opacity: 0.7;
+    text-transform: uppercase;
+    margin-top: 10px;
+    letter-spacing: 1px;
+}
+
+.time-separator {
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-weight: bold;
+    color: var(--text-color);
+    opacity: 0.3;
+    animation: pulse 1s infinite;
+    align-self: flex-start;
+    margin-top: 5px;
+}
+
+.limit-message-text {
+    font-size: 1.2rem;
+    margin-top: 20px;
+    color: var(--text-color);
+    opacity: 0.9;
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* Notification Styles */
+.notification-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column; /* New toasts appear below old ones by default */
+    align-items: flex-end; /* Align toasts to the right */
+    gap: 10px; /* Spacing between multiple toasts */
+}
+
+
+.notification {
+    position: relative;
+    padding: 14px 24px; /* Adjusted padding */
+    border-radius: 50px; /* Pill shape */
+    background-color: #ffffff;
+    color: #333333;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12); /* Adjusted shadow */
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Space between icon and text */
+    opacity: 0;
+    transform: translateY(30px); /* Start slightly lower for a smoother slide-up */
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out; /* Smoother transition */
+    min-width: 280px;
+    max-width: 360px; /* Max width for the toast */
+    width: auto; /* Fit content */
+    /* The original transform: translateY(100%) can be kept if you prefer that animation */
+    /* transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Original transition */
+}
+
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notification.success {
+    /* The 8px border-left will be rounded by the parent's border-radius: 50px, creating the arc effect */
+    border-left: 8px solid #4CAF50; /* Success green (e.g., Material Green 500) */
+}
+
+.notification.error {
+    border-left: 8px solid #F44336; /* Error red (e.g., Material Red 500) */
+}
+
+.notification i {
+    font-size: 20px; /* Icon size */
+    line-height: 1; /* Helps with vertical alignment */
+    flex-shrink: 0; /* Prevent icon from shrinking if text is long */
+}
+
+.notification.success i {
+    color: #4CAF50; /* Green icon color to match border */
+}
+
+.notification.error i {
+    color: #F44336; /* Red icon color to match border */
+}
+
+[data-theme="dark"] .notification {
+    background-color: #ffffff;
+    color: #333333;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Shadow might need to be a bit more pronounced on dark backgrounds */
+}
+
+[data-theme="dark"] .notification.success {
+    border-left-color: #4CAF50; /* Keep green */
+}
+[data-theme="dark"] .notification.success i {
+    color: #4CAF50; /* Keep green */
+}
+
+[data-theme="dark"] .notification.error {
+    border-left-color: #F44336; /* Keep red */
+}
+[data-theme="dark"] .notification.error i {
+    color: #F44336; /* Keep red */
+}
+
+@keyframes pulse {
+    0% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.3; }
+}
+
+.headre-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    font-size: 24px;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .header {
+        margin-bottom: 8px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    input, 
+    textarea,
+    .submit-btn {
+        font-size: 1rem;
+        padding: 12px;
+    }
+
+    .timer-container {
+        gap: 8px;
+    }
+
+    .notification {
+        width: calc(100% - 20px);
+        margin: 0 10px 10px 10px; /* Added bottom margin for stacked mobile toasts if not using gap on container for mobile */
+        right: auto; /* If .notification-container is full width on mobile, this might need to be auto */
+        /* If .notification-container remains fixed to right:20px, then 'right:0' was okay */
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 15px;
+    }
+
+    .header-content {
+        gap: 10px;
+    }
+
+    input {
+        height: 45px;
+    }
+
+    textarea {
+        height: 200px;
+    }
+
+    .submit-btn {
+        height: 45px;
+    }
+
+    .notification {
+        font-size: 0.9rem;
+        padding: 12px 20px; /* Slightly smaller padding for smaller screens */
+        gap: 10px;
+    }
+    .notification i {
+        font-size: 18px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="header-title">Ajouter un nouveau concept</h1>
+                <div class="headre-buttons">
+                  <span class="theme-toggle" id="themeToggle">
+                    <i class="fa-light fa-moon"></i>
+                  </span>
+                  <span class="back-btn" onclick="window.location.href='app.html'">
+                    <i class="fa-light fa-arrow-left"></i>
+                  </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <form class="concept-form" id="conceptForm">
+                <div class="form-group">
+                    <input type="text" placeholder="Ajouter un nouveau terme" id="term" name="term" required>
+                </div>
+
+                <div class="form-group">
+                    <textarea id="definition" placeholder="Ajouter une nouvelle définition" name="definition" required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    Soumettre pour révision
+                </button>
+            </form>
+
+            <div class="limit-message">
+                <div class="timer-container">
+                    <div class="time-block">
+                        <div class="time-value" id="hours">00</div>
+                        <div class="time-label">Heures</div>
+                    </div>
+                    <div class="time-separator">:</div>
+                    <div class="time-block">
+                        <div class="time-value" id="minutes">00</div>
+                        <div class="time-label">Minutes</div>
+                    </div>
+                    <div class="time-separator">:</div>
+                    <div class="time-block">
+                        <div class="time-value" id="seconds">00</div>
+                        <div class="time-label">Secondes</div>
+                    </div>
+                </div>
+                <div class="limit-message-text">
+                    La créativité demande du temps ! Revenez plus tard pour ajouter de nouveaux concepts.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@16.0.2"></script>
+     <script type="module">
+         const client = new window.Appwrite.Client();
+   client
+        .setEndpoint("https://fra.cloud.appwrite.io/v1")
+        .setProject("66bdd9ef0022a854dccc");
+
+    const databases = new window.Appwrite.Databases(client);
+    const account = new window.Appwrite.Account(client);
+
+    const termsDatabaseId = "66bddcb3002ce9c16742";
+    const pendingConceptsCollectionId = "678ac138000835c30413";
+        const DAILY_LIMIT = 5;
+        let countdownInterval;
+
+        function generateUniqueId() {
+            return Math.random().toString(36).substr(2, 9);
+        }
+
+        async function getUserSubmissionsInLast24Hours(userId) {
+            const now = new Date();
+            const yesterday = new Date(now - 24 * 60 * 60 * 1000);
+
+            try {
+                const response = await databases.listDocuments(
+                    termsDatabaseId,
+                    pendingConceptsCollectionId,
+                    [
+                        window.Appwrite.Query.equal('userId', userId),
+                        window.Appwrite.Query.greaterThan('submitted_at', yesterday.toISOString()),
+                        window.Appwrite.Query.lessThan('submitted_at', now.toISOString())
+                    ]
+                );
+
+                return response.documents;
+            } catch (error) {
+                console.error('Error fetching submissions:', error);
+                return [];
+            }
+        }
+
+        function getTimeUntilNextSubmission(submissions) {
+            if (submissions.length === 0) return 0;
+            
+            const oldestSubmission = new Date(submissions[0].submitted_at);
+            const now = new Date();
+            const timeUntilReset = 24 * 60 * 60 * 1000 - (now - oldestSubmission);
+            
+            return Math.max(0, timeUntilReset);
+        }
+
+        function formatTimeRemaining(milliseconds) {
+            const hours = Math.floor(milliseconds / (60 * 60 * 1000));
+            const minutes = Math.floor((milliseconds % (60 * 60 * 1000)) / (60 * 1000));
+            const seconds = Math.floor((milliseconds % (60 * 1000)) / 1000);
+            
+            return {
+                hours: hours.toString().padStart(2, '0'),
+                minutes: minutes.toString().padStart(2, '0'),
+                seconds: seconds.toString().padStart(2, '0')
+            };
+        }
+
+        function updateTimerDisplay(timeObj, previousTimeObj = null) {
+            const elements = {
+                hours: document.getElementById('hours'),
+                minutes: document.getElementById('minutes'),
+                seconds: document.getElementById('seconds')
+            };
+
+            Object.entries(timeObj).forEach(([unit, value]) => {
+                if (previousTimeObj && previousTimeObj[unit] !== value) {
+                    elements[unit].classList.remove('animate');
+                    void elements[unit].offsetWidth; // Force reflow
+                    elements[unit].classList.add('animate');
+                }
+                elements[unit].textContent = value;
+            });
+
+            return timeObj;
+        }
+
+                function showNotification(message, type) {
+            const container = document.getElementById('notificationContainer');
+            if (!container) {
+                console.error('Notification container not found!');
+                return;
+            }
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`; // type will be 'success' or 'error'
+            
+            const icon = document.createElement('i');
+            if (type === 'success') {
+                icon.className = 'fa-light fa-check'; // Use Font Awesome Light check icon
+            } else if (type === 'error') {
+                icon.className = 'fa-light fa-exclamation-circle'; // Using light version for consistency
+            } else { // For other types (e.g., info, warning - if you add them)
+                icon.className = 'fa-light fa-info-circle'; // Using light version
+            }
+            
+            const text = document.createElement('span');
+            text.textContent = message;
+            
+            notification.appendChild(icon);
+            notification.appendChild(text);
+            container.appendChild(notification);
+            
+            // Force reflow to ensure animation plays
+            void notification.offsetWidth; 
+
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10); // Brief delay to allow CSS transition to catch the class change
+            
+            const transitionDuration = 400; // Match the 0.4s transition in CSS
+            const visibleDuration = 3000;
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                // Wait for the hide animation to finish before removing the element
+                notification.addEventListener('transitionend', () => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, { once: true });
+
+                // Fallback: Remove the element after a delay slightly longer than the transition,
+                // in case 'transitionend' doesn't fire (e.g., if the element becomes display:none abruptly).
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, transitionDuration + 50); // e.g., 400ms + 50ms
+            }, visibleDuration);
+        }
+
+        function updateFormState(submissions) {
+            const container = document.querySelector('.container');
+            const timeRemaining = getTimeUntilNextSubmission(submissions);
+
+            if (submissions.length >= DAILY_LIMIT) {
+                container.classList.add('limit-reached');
+                
+                if (countdownInterval) clearInterval(countdownInterval);
+                
+                let previousTime = null;
+                
+                countdownInterval = setInterval(() => {
+                    const newTimeRemaining = getTimeUntilNextSubmission(submissions);
+                    const formattedTime = formatTimeRemaining(newTimeRemaining);
+                    previousTime = updateTimerDisplay(formattedTime, previousTime);
+                    
+                    if (newTimeRemaining <= 0) {
+                        clearInterval(countdownInterval);
+                        container.classList.remove('limit-reached');
+                        checkSubmissionLimit();
+                    }
+                }, 1000); // Update every second
+                
+                const initialTime = formatTimeRemaining(timeRemaining);
+                updateTimerDisplay(initialTime);
+            } else {
+                container.classList.remove('limit-reached');
+                if (countdownInterval) clearInterval(countdownInterval);
+            }
+        }
+
+        async function checkSubmissionLimit() {
+            try {
+                const user = await checkAuthentication();
+                if (!user) return;
+
+                const submissions = await getUserSubmissionsInLast24Hours(user.$id);
+                updateFormState(submissions);
+            } catch (error) {
+                console.error('Error checking submission limit:', error);
+            }
+        }
+
+        async function checkAuthentication() {
+            try {
+                const user = await account.get();
+                return user;
+            } catch (error) {
+                window.location.href = 'login.html';
+                return null;
+            }
+        }
+
+        function getGroupeFromTerm(termValue) {
+            if (!termValue || typeof termValue !== 'string' || termValue.trim() === '') {
+                 
+                return null;  
+            }
+            return termValue.trim().charAt(0).toUpperCase();
+        }
+        
+
+        document.getElementById('conceptForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            try {
+                const user = await checkAuthentication();
+                if (!user) return;
+
+                const submissions = await getUserSubmissionsInLast24Hours(user.$id);
+                if (submissions.length >= DAILY_LIMIT) {
+                    showNotification('Vous avez atteint la limite quotidienne de concepts.', 'error');
+                    return;
+                }
+
+                const term = document.getElementById('term').value.trim();
+                const definition = document.getElementById('definition').value.trim();
+                
+                // --- استخدام الدالة لحساب 'groupe' ---
+                const groupeValue = getGroupeFromTerm(term);
+
+                if (groupeValue === null) {
+                    // هذا يعني أن المصطلح كان فارغًا أو غير صالح
+                    showNotification('Le terme ne peut pas être vide ou est invalide.', 'error');
+                    return;
+                }
+                // --- نهاية استخدام الدالة ---
+
+                const conceptId = generateUniqueId();
+
+                await databases.createDocument(
+                    termsDatabaseId,
+                    pendingConceptsCollectionId,
+                    conceptId, 
+                    {
+                        concept_id: conceptId,
+                        userId: user.$id,
+                        term: term,
+                        definition: definition,
+                        groupe: groupeValue, // <-- استخدام القيمة المحسوبة من الدالة
+                        status: 'pending',
+                        submitted_at: new Date().toISOString()
+                    }
+                );
+
+                showNotification('Concept soumis avec succès ! Il sera examiné par nos administrateurs.', 'success');
+                document.getElementById('conceptForm').reset();
+                checkSubmissionLimit();
+
+            } catch (error) {
+                console.error('Erreur lors de la soumission:', error);
+                // إذا كان الخطأ ناتجًا عن getGroupeFromTerm (في حالة استخدام throw Error)
+                // يمكنك معالجته بشكل خاص هنا
+                showNotification('Une erreur est survenue lors de la soumission. Veuillez réessayer.', 'error');
+            }
+        });
+
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const icon = themeToggle.querySelector('i');
+        
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                icon.className = 'fa-light fa-moon';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                icon.className = 'fa-light fa-sun-bright';
+            }
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthentication();
+            checkSubmissionLimit();
+        });
+    </script>
+</body>
+</html>

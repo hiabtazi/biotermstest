@@ -1,0 +1,309 @@
+<!-- app-html -->
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTerms</title>
+    <link rel="shortcut icon" type="x-icon" href="Logo.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-thin-rounded/css/uicons-thin-rounded.css">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-straight/css/uicons-regular-straight.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.4.2/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel="stylesheet" data-purpose="Layout StyleSheet" title="Web Awesome"
+        href="/css/app-wa-cc491567646eab1188c6538ebc462e7d.css?vsn=d">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/sharp-solid.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.8/css/sharp-light.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="mobile-layout">
+            <!-- Box 1: Header -->
+            <header class="mobile-header">
+                <div class="logo">
+                    <img src="Logo Light Mode.png" alt="BioTerms Logo" class="logo-img light-mode-logo">
+                    <img src="Logo Dark Mode.png" alt="BioTerms Logo" class="logo-img dark-mode-logo"
+                        style="display: none;">
+                </div>
+                <h1 class="site-title">BioTerms</h1>
+                <div class="header-icons">
+                    <button class="key-button">
+                        <div class="key-icon-container">
+                            <i class="fal fa-key"></i>
+                            <span class="count-badge">0</span>
+                        </div>
+                    </button>
+                    <span class="notification-icon-wrapper">
+                        <a href="notifications.html"><i class="fa-light fa-bell"></i></a>
+                        <span class="notification-dot" style="display: none;"></span> <!-- النقطة هنا -->
+                    </span>
+                </div>
+            </header>
+
+            <!-- Box 2: Search and Alphabet -->
+            <div class="mobile-search-section">
+                <div class="search-bar-container">
+                    <input type="text" id="mobileSearchBar" placeholder="Chercher un terme" class="search-bar">
+                    <i id="mobileSearchIcon" class="fa-light fa-magnifying-glass search-icon"></i>
+                </div>
+                <div class="alphabet-index">
+                    <a id="#A">A</a> <a id="#B">B</a> <a id="#C">C</a> <a id="#D">D</a> <a id="#E">E</a>
+                    <a id="#F">F</a> <a id="#G">G</a> <a id="#H">H</a> <a id="#I">I</a> <a id="#J">J</a>
+                    <a id="#K">K</a> <a id="#L">L</a> <a id="#M">M</a> <a id="#N">N</a> <a id="#O">O</a>
+                    <a id="#P">P</a> <a id="#Q">Q</a> <a id="#R">R</a> <a id="#S">S</a> <a id="#T">T</a>
+                    <a id="#U">U</a> <a id="#V">V</a> <a id="#W">W</a> <a id="#X">X</a> <a id="#Y">Y</a> <a
+                        id="#Z">Z</a>
+                </div>
+            </div>
+
+            <!-- Box 3: Terms List -->
+
+            <div class="container">
+                <div id="conceptsContainer" class="concepts-wrapper">
+                    <div class="mobile-terms-container">
+                        <ul id="mobileDefinitionsList" class="term-list">
+                            <!-- Terms will be added dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Modal -->
+            <div id="conceptModal" class="modal">
+                <div class="modal-content">
+                    <h2 id="modalTerm"></h2>
+                    <div class="definition-container">
+                        <p id="modalDefinition" class="definition-content"></p>
+                    </div>
+                    <div class="definition-buttons">
+                        <span class="definition-btn close-btn">
+                            <i class="fa-light fa-xmark"></i>
+                        </span>
+                        <span class="definition-btn dark-mode-toggle">
+                            <i class="fa-light fa-moon"></i>
+                        </span>
+                        <span class="definition-btn font-increase">A<sup>+</sup></span>
+                        <span class="definition-btn font-decrease">A<sup>-</sup></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Tab Bar -->
+            <div class="mobile-tab-bar">
+                <div class="role-based-icons-mobile">
+                    <span class="admin-icon-container" style="display: none;">
+                        <i class="fa-light fa-grid-horizontal"></i>
+                    </span>
+                    <span class="user-icon-container" style="display: none;">
+                        <i class="fa-light fa-circle-plus"></i>
+                    </span>
+                </div>
+                <a href="guide.html"><span class="info-button">
+                        <i class="fa-light fa-circle-info"></i>
+                    </span> </a>
+                <a href="bookmarks.html"><span class="save-button">
+                        <i class="fa-light fa-circle-bookmark"></i>
+                    </span></a>
+                <span> <a href="user-info.html" id="userInfoLink">
+                        <i class="fa-light fa-user"></i> </a>
+                </span>
+                <span class="logout-button" id="logoutButtonMobile">
+                    <i class="fa-light fa-right-from-bracket"></i>
+                </span>
+
+            </div>
+        </div>
+
+
+
+        <div class="desktop-layout">
+            <!-- desktop layout -->
+            <div class="container">
+                <header>
+                    <div class="logo">
+                        <img src="Logo Light Mode.png" alt="BioTerms Logo" class="logo-img light-mode-logo">
+                        <img src="Logo Dark Mode.png" alt="BioTerms Logo" class="logo-img dark-mode-logo"
+                            style="display: none;">
+                    </div>
+                    <h1 class="site-title">BioTerms</h1>
+                    <div class="header-icons">
+                        <div class="role-based-icons-desktop">
+                            <button class="admin-icon-container" style="display: none;">
+                                <i class="fa-light fa-grid-horizontal"></i>
+                            </button>
+                            <button class="user-icon-container" style="display: none;">
+                                <i class="fa-light fa-circle-plus"></i>
+                            </button>
+                        </div>
+                        <button class="key-button">
+                            <div class="key-icon-container">
+                                <i class="fal fa-key"></i>
+                                <span class="count-badge">0</span>
+                            </div>
+                        </button>
+                        <button class="info-button"><i class="fa-light fa-circle-info"></i></button>
+                        <a href="bookmarks.html"> <button class="save-button"> <i class="fa-light fa-circle-bookmark"></i>
+                            </button></a>
+                        <button class="user-info"> <a href="user-info.html" id="userInfoLink">
+                                <i class="fa-light fa-user"></i> </a>
+                        </button>
+                        <button class="logout-button" id="logoutButtonDesktop">
+                            <i class="fa-light fa-right-from-bracket"></i>
+                        </button>
+                        <button class="notification-icon-wrapper">
+                            <a href="notifications.html"><i class="fa-light fa-bell"></i></a>
+                            <span class="notification-dot" style="display: none;"></span> <!-- هنا فين غيجي الرقم -->
+                        </button>
+                    </div>
+                </header>
+
+                <div class="main-content">
+                    <aside class="sidebar">
+                        <div class="search-bar-container">
+                            <input type="text" id="desktopSearchBar" placeholder="Chercher un terme" class="search-bar">
+                            <i id="desktopSearchIcon" class="fa-light fa-magnifying-glass search-icon"></i>
+                        </div>
+                        <div class="alphabet-index">
+                            <a id="#A">A</a> <a id="#B">B</a> <a id="#C">C</a> <a id="#D">D</a> <a id="#E">E</a>
+                            <a id="#F">F</a> <a id="#G">G</a> <a id="#H">H</a> <a id="#I">I</a> <a id="#J">J</a>
+                            <a id="#K">K</a> <a id="#L">L</a> <a id="#M">M</a> <a id="#N">N</a> <a id="#O">O</a>
+                            <a id="#P">P</a> <a id="#Q">Q</a> <a id="#R">R</a> <a id="#S">S</a> <a id="#T">T</a>
+                            <a id="#U">U</a> <a id="#V">V</a> <a id="#W">W</a> <a id="#X">X</a> <a id="#Y">Y</a> <a
+                                id="#Z">Z</a>
+                        </div>
+                        <div class="container">
+                            <div id="conceptsContainer" class="concepts-wrapper">
+                                <ul id="definitionsList" class="term-list">
+                                    <!-- Les termes seront ajoutés ici dynamiquement -->
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- داخل .desktop-layout .sidebar -->
+                        <div class="pagination-container">
+                            <!-- Pagination buttons will be generated here -->
+                        </div>
+                    </aside>
+                    <main class="content">
+                        <!-- La définition du terme sélectionné sera affichée ici -->
+                    </main>
+                </div>
+            </div>
+        </div>
+        <div id="toast" class="toast" style="display: none">
+            <span id="toastMessage"></span>
+            <div class="toast-icon-container">
+                <i class="toast-icon"></i>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@16.0.2"></script>
+ 
+    <!-- Votre script JavaScript -->
+    <script src="main.js" type="module"></script>
+    <script>
+        const client = new Appwrite.Client();
+        const account = new Appwrite.Account(client);
+        const storage = new Appwrite.Storage(client);
+    const BUCKET_ID = "673f0e8f0031d1df2e9b";
+
+    client
+        .setEndpoint("https://fra.cloud.appwrite.io/v1")
+        .setProject("66bdd9ef0022a854dccc");
+        /* async function loadProfileImage() {
+            try {
+                const user = await account.get();
+                let profileImageSrc = 'Logo.png';
+
+                if (user.prefs && user.prefs.profilePictureId) {
+                    try {
+                        profileImageSrc = await storage.getFileView(BUCKET_ID, user.prefs.profilePictureId);
+                    } catch (storageError) {
+                        console.error('Erreur photo de profil:', storageError);
+                    }
+                }
+
+                document.getElementById('profileImageHeader').src = profileImageSrc;
+            } catch (error) {
+                console.error('Erreur lors du chargement de la photo de profil:', error);
+            }
+        }
+
+        // Charger la photo de profil au chargement de la page
+        loadProfileImage(); */
+
+        if (userRole === 'admin') {
+            const adminIcon = document.createElement('i');
+            adminIcon.className = 'fa-light fa-grid-horizontal';
+            adminIcon.style.cursor = 'pointer';
+            adminIcon.onclick = () => window.location.href = 'dashboard.html';
+            header.appendChild(adminIcon);
+        }
+
+        // Pour tous les utilisateurs
+        const addIcon = document.createElement('i');
+        addIcon.className = 'fa-light fa-circle-plus';
+        addIcon.style.cursor = 'pointer';
+        addIcon.onclick = () => window.location.href = 'add-concept.html';
+        header.appendChild(addIcon);
+
+        // Gestion de la déconnexion
+        document.getElementById('logoutButton').addEventListener('click', async () => {
+            try {
+                await account.deleteSession('current');
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Erreur lors de la déconnexion:', error);
+            }
+        });
+
+        // تحديث تلقائي عند تغيير الإشارات
+        window.addEventListener('storage', async (event) => {
+            if (event.key === 'bookmarksUpdated') {
+                await loadFavorites();
+                updateFavoriteIcons();
+            }
+        });
+
+        async function loadFavorites() {
+            try {
+                const user = await account.get();
+                const response = await databases.listDocuments(
+                    bookmarksDatabaseId,
+                    bookmarksCollectionId,
+                    [Query.equal('userId', user.$id)]
+                );
+
+                favorites = {};
+                response.documents.forEach(doc => {
+                    favorites[doc.term] = doc;
+                });
+
+                updateFavoriteIcons();
+            } catch (error) {
+                console.error('خطأ في تحميل الإشارات:', error);
+            }
+        }
+
+        function updateFavoriteIcons() {
+            document.querySelectorAll('.term-list li').forEach(li => {
+                const term = li.querySelector('.term-text').textContent;
+                const icon = li.querySelector('.fa-bookmark, .fa-bookmark-slash');
+                if (favorites[term]) {
+                    icon.className = 'fa-light fa-bookmark-slash';
+                } else {
+                    icon.className = 'fa-light fa-bookmark';
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,192 @@
+<!-- signup.html (النسخة المصححة) -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - BioTerms</title>
+    <link rel="shortcut icon" type="x-icon" href="Logo.png">
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@16.0.2"></script>
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+    <style>
+        /* CSS ديالك كيبقى كيفما هو، مافيهش مشكل */
+        :root { --primary-color: #000000; --background-color: #f8f8f8; --text-color: #333333; --border-color: #e0e0e0; --hover-color: #f5f5f5; --shadow-color: rgba(0, 0, 0, 0.1); }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: var(--background-color); color: var(--text-color); line-height: 1.6; }
+        .signup-container { background-color: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 8px 24px var(--shadow-color); width: 90%; max-width: 420px; text-align: center; }
+        h1 { font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--primary-color); font-weight: 600; }
+        .logo { width: 100px; height: auto; margin: 0 auto 1.5rem; display: block; }
+        .google-btn, .signup-btn { background-color: white; color: var(--primary-color); border: 2px solid var(--primary-color); padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: 500; margin: 12px 0; width: 100%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .google-btn:hover, .signup-btn:hover { background-color: var(--primary-color); color: white; }
+        .signup-btn:disabled { background-color: #cccccc; border-color: #cccccc; cursor: not-allowed; }
+        .input-group { position: relative; margin-bottom: 20px; text-align: left; }
+        .input-group input { width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; }
+        .input-group input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1); }
+        .input-group .toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-color); }
+        .divider { display: flex; align-items: center; margin: 24px 0; color: #aaa; }
+        .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background-color: var(--border-color); }
+        .divider span { padding: 0 12px; }
+        .form-toggle { color: var(--primary-color); cursor: pointer; margin-top: 16px; display: inline-block; text-decoration: none; font-size: 0.9rem; }
+        .form-toggle:hover { text-decoration: underline; }
+        .toast { position: fixed; top: 20px; right: 20px; transform: translateX(120%); background-color: white; padding: 16px 30px; border-radius: 8px; display: flex; align-items: center; gap: 12px; opacity: 0; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 1000; min-width: 250px; border-left: 4px solid #3498db; }
+        .toast.success { border-color: #2ecc71; } .toast.error { border-color: #e74c3c; }
+        .toast i { font-size: 20px; } .toast.success i { color: #2ecc71; } .toast.error i { color: #e74c3c; }
+        .toast.show { opacity: 1; transform: translateX(0); }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h1>Créez votre compte</h1>
+        <img src="logo.png" alt="Logo BioTerms" class="logo">
+
+        <button id="google-signup-btn" class="google-btn">
+            <i class="fab fa-google"></i> S'inscrire avec Google
+        </button>
+
+        <div class="divider"><span>ou</span></div>
+
+        <form id="email-signup-form">
+            <div class="input-group">
+                <input type="text" id="signup-name" placeholder="Nom complet" required>
+            </div>
+            <div class="input-group">
+                <input type="email" id="signup-email" placeholder="Adresse email" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="signup-password" placeholder="Mot de passe (min. 8 caractères)" required minlength="8">
+                <i id="toggle-password-btn" class="toggle-password fa-light fa-eye"></i>
+            </div>
+            <button type="submit" id="signup-submit-btn" class="signup-btn">Créer le compte</button>
+        </form>
+
+        <a href="login.html" class="form-toggle">Déjà un compte ? Se connecter</a>
+
+        <div id="toast" class="toast">
+            <i class="fas fa-info-circle"></i>
+            <span id="toast-message"></span>
+        </div>
+    </div>
+
+     <script>
+        const { Client, Account, ID } = Appwrite;
+        const client = new Client();
+
+        // ===================================================================
+        // ⭐⭐⭐ الخطوة 1: تصحيح إعدادات الاتصال (أهم تغيير) ⭐⭐⭐
+        // ===================================================================
+        client
+    .setEndpoint("https://fra.cloud.appwrite.io/v1")  // الرابط الصحيح
+    .setProject("66bdd9ef0022a854dccc");             // الـ ID الصحيح        // الـ ID الصحيح
+
+        const account = new Account(client);
+
+        // --- عناصر الواجهة ---
+        const googleBtn = document.getElementById('google-signup-btn');
+        const emailForm = document.getElementById('email-signup-form');
+        const submitBtn = document.getElementById('signup-submit-btn');
+        const togglePasswordBtn = document.getElementById('toggle-password-btn');
+
+        // --- دالة إظهار الرسائل ---
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            const icon = toast.querySelector('i');
+            toast.className = 'toast';
+            icon.className = 'fas';
+            const toastTypes = { 'success': { class: 'success', icon: 'fa-check-circle' }, 'error': { class: 'error', icon: 'fa-exclamation-circle' }};
+            const currentType = toastTypes[type] || { class: 'info', icon: 'fa-info-circle' };
+            toast.classList.add(currentType.class); icon.classList.add(currentType.icon);
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 5000);
+        }
+
+        // --- إظهار/إخفاء كلمة المرور ---
+        togglePasswordBtn.addEventListener('click', () => {
+            const passwordInput = document.getElementById('signup-password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                togglePasswordBtn.classList.remove('fa-eye');
+                togglePasswordBtn.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                togglePasswordBtn.classList.remove('fa-eye-slash');
+                togglePasswordBtn.classList.add('fa-eye');
+            }
+        });
+
+        googleBtn.addEventListener('click', () => {
+    try {
+        account.createOAuth2Session(
+            'google',
+             'http://localhost:5173/src/app.html',  
+            'http://localhost:5173/src/login.html'
+        );
+    } catch (error) {
+        console.error('Google login error:', error);
+        showToast("Échec de la connexion via Google.", 'error');
+    }
+});
+
+        // ===================================================================
+        // ⭐⭐⭐ الخطوة 3: تصحيح التسجيل عبر الإيميل ⭐⭐⭐
+        // ===================================================================
+        emailForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Création...';
+
+            try {
+                // 1. إنشاء الحساب
+                const userId = ID.unique();
+                await account.create(userId, email, password, name);
+                
+                // 2. إرسال كود التأكيد (OTP)
+                // هادي هي الطريقة الجديدة والصحيحة
+                await account.createEmailToken(userId, email);
+
+                // 3. حفظ المعلومات اللازمة لصفحة التحقق
+                localStorage.setItem('userIdForVerification', userId);
+                localStorage.setItem('emailForVerification', email);
+
+                showToast('Compte créé. Vérifiez votre email pour le code.', 'success');
+                
+                // 4. التوجيه لصفحة التحقق
+                setTimeout(() => {
+                    window.location.href = 'verify.html';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Email signup error:', error);
+                let message = "Une erreur est survenue.";
+                if (error.code === 409) { // 409 Conflict: User already exists
+                    message = "Un utilisateur avec cet email existe déjà.";
+                }
+                showToast(message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Créer le compte';
+            }
+        });
+        
+        // ===================================================================
+        // ⭐⭐⭐ الخطوة 4: تبسيط التحقق عند تحميل الصفحة ⭐⭐⭐
+        // ===================================================================
+        window.onload = async () => {
+            try {
+                await account.get();
+                // إذا كان المستخدم مسجلاً دخوله، لا يجب أن يكون هنا.
+                console.log('User already logged in, redirecting from signup page.');
+                window.location.href = 'app.html';
+            } catch (error) {
+                // هذا هو الوضع الطبيعي، المستخدم غير مسجل دخوله.
+                console.log('User is not logged in. Signup page loaded correctly.');
+            }
+        };
+
+    </script>
+</body>
+</html>

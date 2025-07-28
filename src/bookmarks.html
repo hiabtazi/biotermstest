@@ -1,0 +1,268 @@
+<!-- bookmarks.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTerms - Favoris</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" type="x-icon" href="Logo.png">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-thin-rounded/css/uicons-thin-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-straight/css/uicons-regular-straight.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.4.2/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel="stylesheet" data-purpose="Layout StyleSheet" title="Web Awesome" href="/css/app-wa-cc491567646eab1188c6538ebc462e7d.css?vsn=d">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/sharp-solid.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.8/css/sharp-light.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+</head>
+<style>
+       
+
+.notification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 450px; /* يمكنك تعديل هذا العرض */
+  background-color: var(--background-light, white);
+  color: var(--text-light, #333);
+  border-radius: 50px; /* الحواف الدائرية الكاملة */
+  padding: 12px 20px 12px 65px; /* الأهم: ترك مساحة 65px على اليسار للشكل الملون والأيقونة */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-color-light, #ddd);
+  overflow: hidden; /* مهم جداً: لقص الشكل الملون داخل الحواف الدائرية */
+  font-family: sans-serif;
+   
+}
+
+/* الوضع الداكن */
+body.dark-mode .notification {
+  background-color: var(--card-bg-dark);
+  color: var(--text-dark);
+  border-color: var(--border-color-dark);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 
+  الشكل الملون (السر هنا!)
+  نستخدم ::before لإنشاء طبقة ملونة على اليسار
+*/
+.notification::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 55px; /* عرض المنطقة الملونة */
+  border-radius: 50px 0 0 50px; /* يجعل الحافة اليسرى دائرية واليمنى مستقيمة */
+  z-index: 1; /* خلف المحتوى */
+}
+
+/* 
+  حاوية الأيقونة
+  نجعلها تغطي نفس مساحة الشكل الملون لتوسيط الأيقونة بداخلها
+*/
+.notification .notification-icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 55px; /* نفس عرض المنطقة الملونة */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  z-index: 2; /* فوق المنطقة الملونة */
+}
+
+/* الأيقونة نفسها */
+.notification .notification-icon i {
+    color: white; /* كل الأيقونات ستكون بيضاء اللون */
+}
+
+
+/* === تخصيص أنواع الإشعارات === */
+
+/* 1. إشعار النجاح (الأخضر) */
+.notification.success::before {
+  background-color: #4CAF50; /* أخضر */
+}
+
+/* 2. إشعار المعلومات (الأزرق - التصميم الجديد) */
+.notification.info::before {
+  background-color: #2196F3; /* أزرق */
+}
+
+
+/* محتوى الإشعار (النص والزر) */
+.notification-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 15px;
+  z-index: 2; /* فوق المنطقة الملونة */
+  position: relative;
+}
+
+.notification-content .message {
+  flex-grow: 1;
+  font-size: 14px;
+  line-height: 1.4;
+  /* لا نحتاج لون هنا لأنه يرثه من .notification */
+}
+
+/* زر الإلغاء */
+.undo-button {
+  background-color: transparent;
+  border: 1px solid var(--text-light, #555);
+  color: var(--text-light, #333);
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.undo-button:hover {
+  background-color: var(--text-light, #555);
+  color: var(--background-light, white);
+}
+
+body.dark-mode .undo-button {
+  border-color: var(--text-dark);
+  color: var(--text-dark);
+}
+
+body.dark-mode .undo-button:hover {
+  background-color: var(--text-dark);
+  color: var(--background-dark, #121212);
+}
+
+/* Animation */
+@keyframes slideUp {
+  from {
+    transform: translate(-50%, 80px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+</style>
+<body>
+    <div id="app">
+        <!-- Mobile Layout -->
+        <div class="mobile-layout">
+            <header class="mobile-header">
+                <div class="logo">
+                    <img src="Logo Light Mode.png" alt="BioTerms Logo" class="logo-img light-mode-logo">
+                    <img src="Logo Dark Mode.png" alt="BioTerms Logo" class="logo-img dark-mode-logo" style="display: none;">
+                </div>
+                <h1 class="site-title">Mes Favoris</h1>
+                <div class="header-icons">
+                    <button class="back-button" href="http://localhost:5173/src/app.html">
+                        <i class="fa-light fa-arrow-left"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="mobile-terms-container">
+                <ul id="mobileBookmarksList" class="term-list">
+                    <!-- Bookmarked terms will be added here -->
+                </ul>
+            </div>
+
+            <!-- Mobile concept modal -->
+                        <!-- Mobile concept modal -->
+            <div id="conceptModal" class="modal">
+                <div class="modal-content">
+                    <h2 id="modalTerm"></h2>
+                    <div class="definition-container">
+                        <p id="modalDefinition"></p>
+                    </div>
+                    <div class="definition-buttons">
+                        <span class="definition-btn close-btn">
+                            <i class="fa-light fa-xmark"></i>
+                        </span>
+                        <span class="definition-btn dark-mode-toggle">
+                            <i class="fa-light fa-moon"></i>
+                        </span>
+                        <span class="definition-btn font-increase">A<sup>+</sup></span>
+                        <span class="definition-btn font-decrease">A<sup>-</sup></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Layout -->
+        <div class="desktop-layout">
+            <div class="container">
+                <header>
+                    <div class="logo">
+                        <img src="Logo Light Mode.png" alt="BioTerms Logo" class="logo-img light-mode-logo">
+                        <img src="Logo Dark Mode.png" alt="BioTerms Logo" class="logo-img dark-mode-logo" style="display: none;">
+                    </div>
+                    <h1 class="site-title">Mes Favoris</h1>
+                    <div class="header-icons">
+                        <button class="back-button">
+                            <i class="fa-light fa-arrow-left"></i>
+                        </button>
+                    </div>
+                </header>
+                <div class="main-content">
+                    <aside class="sidebar">
+                        <ul id="desktopBookmarksList" class="term-list">
+                            <!-- Bookmarked terms will be added here -->
+                        </ul>
+                    </aside>
+                    <main class="content">
+                        <!-- Selected term definition will be displayed here -->
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@16.0.2"></script>
+ 
+    <script type="module" src="./bookmarks.js"></script>
+    <script>
+        
+/* window.addEventListener('storage', async (event) => {
+    if (event.key === 'bookmarksUpdated') {
+        await loadBookmarks();
+    }
+}); */
+
+client
+        .setEndpoint("https://fra.cloud.appwrite.io/v1")
+        .setProject("66bdd9ef0022a854dccc");
+
+async function loadBookmarks() {
+    try {
+        const user = await account.get();
+        const response = await databases.listDocuments(
+            "66bddcb3002ce9c16742",
+        "67607e0c0013805dde72",
+        [Query.equal('userId', user.$id)]
+        );
+        
+        bookmarkedTerms = response.documents;
+        displayBookmarks();
+    } catch (error) {
+        console.error('Failed to load bookmarks:', error);
+    }
+}
+    </script>
+</body>
+</html>

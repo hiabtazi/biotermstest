@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - BioTerms</title>
+    <!-- Font Awesome & Other Icons -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-thin-rounded/css/uicons-thin-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-straight/css/uicons-regular-straight.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.4.2/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel="stylesheet" data-purpose="Layout StyleSheet" title="Web Awesome" href="/css/app-wa-cc491567646eab1188c6538ebc462e7d.css?vsn=d">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/sharp-solid.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.8/css/sharp-light.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+
+<style>
+    :root {
+        --background-light: #ffffff;
+        --text-light: #333333;
+        --border-light: #eee;
+        --header-bg-light: #ffffff;
+        --card-bg-light: #ffffff;
+        --card-shadow-light: rgba(0, 0, 0, 0.1);
+        --unread-bg-light: #f8f9fa; /* Light background for unread */
+        --filter-border-light: #ddd;
+        --filter-active-bg-light: var(--text-light);
+        --filter-active-text-light: var(--background-light);
+
+        --background-dark: #333333;
+        --text-dark: #ffffff;
+        --border-dark: #555;
+        --header-bg-dark: #333333;
+        --card-bg-dark: #4a4a4a;
+        --card-shadow-dark: rgba(0, 0, 0, 0.3);
+        --unread-bg-dark: #404040; /* Slightly darker background for unread in dark mode */
+        --filter-border-dark: #555;
+        --filter-active-bg-dark: var(--text-dark);
+        --filter-active-text-dark: var(--background-dark);
+
+        --success-green: #28a745;
+        --warning-orange: #ff9800;
+        --danger-red: #dc3545;
+        --info-blue: #17a2b8; /* For default/info */
+
+        /* Transitions */
+        --transition-speed: 0.3s;
+    }
+
+    /* === Global Styles === */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: var(--background-light);
+        color: var(--text-light);
+        transition: background-color var(--transition-speed), color var(--transition-speed);
+    }
+
+    body.dark-mode {
+        background-color: var(--background-dark);
+        color: var(--text-dark);
+    }
+
+    button {
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    /* === Header === */
+    .main-header {
+        background: var(--header-bg-light);
+        color: var(--text-light);
+        width: 90%; /* More responsive */
+        max-width: 800px; /* Max width */
+        margin: 20px auto;
+        padding: 15px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px var(--card-shadow-light);
+        transition: background-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    body.dark-mode .main-header {
+        background: var(--header-bg-dark);
+        color: var(--text-dark);
+        box-shadow: 0 2px 4px var(--card-shadow-dark);
+    }
+
+    .logo {
+        display: flex; /* Changed to flex */
+        align-items: center; /* Vertically align items */
+        gap: 10px; /* Space between logo images if needed */
+        order: 3; /* Move to right */
+    }
+
+    .logo img {
+        width: 45px; /* Adjusted size */
+        height: 45px;
+        display: block; /* Ensure proper block display */
+    }
+     /* Initially hide dark mode logo */
+     .logo .dark-mode-logo { display: none; }
+     body.dark-mode .logo .light-mode-logo { display: none; }
+     body.dark-mode .logo .dark-mode-logo { display: block; }
+
+
+    .header-title {
+        font-size: 24px; /* Adjusted size */
+        font-weight: bold;
+        order: 2; /* Center */
+        flex-grow: 1;
+        text-align: center;
+        margin: 0 15px; /* Add some horizontal margin */
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px; /* Space between buttons */
+        order: 1; /* Move to left */
+    }
+
+    .header-actions button {
+        background: none;
+        border: none;
+        color: var(--text-light); /* Inherit text color */
+        font-size: 22px; /* Adjusted icon size */
+        padding: 5px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color var(--transition-speed), color var(--transition-speed);
+    }
+     body.dark-mode .header-actions button {
+         color: var(--text-dark);
+     }
+
+    .header-actions button:hover {
+        background-color: rgba(0, 0, 0, 0.05); /* Subtle hover */
+    }
+    body.dark-mode .header-actions button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .back-btn i {
+        margin-right: 3px; /* Small space for back icon */
+    }
+
+
+    /* === Notifications Container === */
+    .notifications-container {
+        width: 90%; /* More responsive */
+        max-width: 800px; /* Max width */
+        margin: 20px auto;
+        background: var(--card-bg-light);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px var(--card-shadow-light);
+        transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    body.dark-mode .notifications-container {
+        background: var(--card-bg-dark);
+        box-shadow: 0 4px 8px var(--card-shadow-dark);
+    }
+
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    body.dark-mode .notifications-header {
+        border-bottom-color: var(--border-dark);
+    }
+
+    .notifications-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .clear-all {
+        background: none;
+        border: none;
+        color: var(--text-light);
+        cursor: pointer;
+        font-size: 14px;
+        padding: 5px 10px;
+        border-radius: 4px;
+        transition: background-color var(--transition-speed), color var(--transition-speed);
+    }
+
+    body.dark-mode .clear-all {
+        color: var(--text-dark);
+    }
+
+    .clear-all:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+     body.dark-mode .clear-all:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* === Filter Buttons === */
+    .filter-container {
+        display: flex;
+        margin-bottom: 20px;
+        gap: 10px;
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    }
+
+    .filter-btn {
+        background: var(--background-light);
+        border: 1px solid var(--filter-border-light);
+        color: var(--text-light);
+        padding: 8px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all var(--transition-speed);
+        display: inline-flex; /* To align text and badge */
+        align-items: center;
+        font-size: 14px;
+    }
+
+    body.dark-mode .filter-btn {
+        background: var(--background-dark);
+        color: var(--text-dark);
+        border-color: var(--filter-border-dark);
+    }
+
+    .filter-btn.active {
+        background: var(--filter-active-bg-light);
+        color: var(--filter-active-text-light);
+        border-color: var(--filter-active-bg-light);
+    }
+
+    body.dark-mode .filter-btn.active {
+        background: var(--filter-active-bg-dark);
+        color: var(--filter-active-text-dark);
+        border-color: var(--filter-active-bg-dark);
+    }
+
+    /* Filter Count Badge */
+    .filter-count-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 8px;
+        padding: 2px 6px;
+        font-size: 11px; /* Smaller font */
+        font-weight: bold;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 9px; /* More rounded */
+        color: white;
+        background-color: #6c757d; /* Default grey for 'All' */
+        line-height: 1;
+        vertical-align: middle;
+    }
+
+    /* Specific colors for filter count badges */
+     .filter-btn.active .filter-count-badge {
+         /* Keep badge colors consistent even when button is active */
+         /* Except for 'All', maybe make it match active button */
+          background-color: #6c757d; /* Keep default or change if needed */
+           color: white;
+     }
+     .filter-btn[data-filter="all"].active .filter-count-badge {
+         background-color: var(--filter-active-text-light); /* Match text color */
+         color: var(--filter-active-bg-light); /* Match background color */
+     }
+     body.dark-mode .filter-btn[data-filter="all"].active .filter-count-badge {
+         background-color: var(--filter-active-text-dark);
+         color: var(--filter-active-bg-dark);
+     }
+
+
+    #count-approved { background-color: var(--success-green); }
+    #count-rejected { background-color: var(--danger-red); }
+    #count-new_concept { background-color: var(--warning-orange); }
+
+    /* Hide badge if count is 0 (handled by JS) */
+    .filter-count-badge:empty,
+    .filter-count-badge[style*="display: none"] /* More reliable CSS check */
+     { display: none !important; } /* Use important if needed */
+
+
+    /* === Notifications Area === */
+    #notificationsArea {
+        margin-top: 10px;
+    }
+
+    .no-notifications {
+        text-align: center;
+        padding: 30px;
+        color: #888;
+        font-style: italic;
+        transition: color var(--transition-speed);
+    }
+
+    body.dark-mode .no-notifications {
+        color: #aaa;
+    }
+
+    /* Notification Card */
+    .notification-card {
+        background: var(--card-bg-light);
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px var(--card-shadow-light);
+        position: relative;
+        transition: transform var(--transition-speed) ease-in-out, background-color var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
+        display: flex;
+        flex-direction: column;
+        border-left: 5px solid transparent; /* Base for colored border */
+        cursor: pointer; /* Indicate clickable */
+    }
+
+    body.dark-mode .notification-card {
+        background: var(--card-bg-dark);
+        box-shadow: 0 2px 4px var(--card-shadow-dark);
+    }
+
+    /* Unread Style */
+    .notification-card.unread {
+         background-color: var(--unread-bg-light);
+         /* font-weight: bold; Optional: Makes text bolder */
+    }
+    body.dark-mode .notification-card.unread {
+         background-color: var(--unread-bg-dark);
+    }
+
+
+    .notification-card:hover {
+        transform: translateY(-3px); /* Subtle lift effect */
+         box-shadow: 0 5px 10px var(--card-shadow-light);
+    }
+     body.dark-mode .notification-card:hover {
+        box-shadow: 0 5px 10px var(--card-shadow-dark);
+    }
+
+    /* Card Type Specific Borders */
+    .notification-card.approved { border-left-color: var(--success-green); }
+    .notification-card.rejected { border-left-color: var(--danger-red); }
+    .notification-card.new_concept { border-left-color: var(--warning-orange); }
+    /* Add more types if needed */
+    .notification-card.default { border-left-color: var(--info-blue); }
+
+
+    /* Card Badge */
+    .notification-card .badge {
+        padding: 4px 10px; /* Smaller padding */
+        font-size: 11px; /* Smaller font */
+        border-radius: 12px; /* Pill shape */
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-weight: bold;
+        color: white; /* Default text color for badge */
+        z-index: 1;
+    }
+
+    /* Card Badge Colors */
+    .notification-card.approved .badge { background-color: var(--success-green); }
+    .notification-card.rejected .badge { background-color: var(--danger-red); }
+    .notification-card.new_concept .badge { background-color: var(--warning-orange); }
+    .notification-card.default .badge { background-color: var(--info-blue); }
+
+
+    /* Card Header & Time */
+     .notification-header { /* Container for title and time if needed */
+         display: flex;
+         justify-content: space-between;
+         align-items: flex-start; /* Align items to the top */
+         margin-bottom: 8px;
+         padding-right: 60px; /* Space for badge and time */
+     }
+
+    .notification-term {
+        font-weight: bold;
+        font-size: 16px; /* Slightly smaller */
+        margin-bottom: 5px;
+        color: var(--text-light);
+         transition: color var(--transition-speed);
+    }
+     body.dark-mode .notification-term {
+         color: var(--text-dark);
+     }
+
+    .notification-time {
+        font-size: 11px; /* Smaller */
+        color: #888;
+        position: absolute;
+        top: 50px;  /* Position below the badge */
+        right: 10px;
+        z-index: 1;
+         transition: color var(--transition-speed);
+    }
+    body.dark-mode .notification-time { color: #aaa; }
+
+    /* Card Body */
+    .notification-body {
+        margin-bottom: 10px;
+    }
+
+    .notification-brief {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.4; /* Adjust line height */
+        /* Optional: Limit lines shown */
+        /* display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis; */
+         transition: color var(--transition-speed);
+    }
+
+    body.dark-mode .notification-brief {
+        color: #bbb;
+    }
+
+    /* Card Footer & Delete Button */
+    .notification-footer {
+        display: flex;
+        justify-content: flex-end; /* Align button to the right */
+        align-items: center;
+        margin-top: auto; /* Push footer to the bottom */
+        padding-top: 10px; /* Space above the button */
+    }
+
+    .delete-btn {
+        background: none;
+        border: none;
+        color: var(--danger-red); /* Make delete icon red */
+        cursor: pointer;
+        padding: 8px; /* Increase click area */
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color var(--transition-speed);
+        font-size: 16px; /* Adjust icon size */
+    }
+
+    .delete-btn:hover {
+        background-color: rgba(220, 53, 69, 0.1); /* Light red background on hover */
+    }
+
+    /* === Loader === */
+    .notifications-loader {
+        display: none; /* Hidden by default */
+        text-align: center;
+        padding: 30px;
+        color: var(--text-light);
+        transition: color var(--transition-speed);
+    }
+
+    body.dark-mode .notifications-loader {
+        color: var(--text-dark);
+    }
+
+    .loader-spinner {
+        width: 30px; /* Smaller spinner */
+        height: 30px;
+        border: 3px solid rgba(128, 128, 128, 0.2);
+        border-top: 3px solid var(--text-light);
+        border-radius: 50%;
+        margin: 0 auto 10px; /* Adjusted margin */
+        animation: spin 1s linear infinite;
+         transition: border-top-color var(--transition-speed);
+    }
+
+    body.dark-mode .loader-spinner {
+        border-top-color: var(--text-dark);
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* === Refresh Button === */
+     #refreshNotifications {
+         /* Using general action-btn style from modal */
+         display: block; /* Make it block */
+         margin: 20px auto 0; /* Center it below content */
+     }
+
+
+    /* === Modal Styles === */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.6); /* Darker overlay */
+        display: none; /* Hidden by default, shown by JS */
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(3px); /* Optional blur effect */
+         opacity: 0;
+         transition: opacity var(--transition-speed) ease-out;
+    }
+     .modal.show {
+         display: flex;
+         opacity: 1;
+     }
+
+
+    .modal-content {
+        background-color: var(--card-bg-light);
+        padding: 25px; /* More padding */
+        border-radius: 10px; /* Slightly more rounded */
+        width: 90%;
+        max-width: 500px;
+        position: relative;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        transform: translateY(-20px);
+        transition: background-color var(--transition-speed), transform var(--transition-speed) ease-out;
+         max-height: 80vh; /* Limit height */
+         display: flex; /* Use flexbox for layout */
+         flex-direction: column; /* Stack content vertically */
+    }
+     .modal.show .modal-content {
+        transform: translateY(0);
+     }
+
+    body.dark-mode .modal-content {
+        background-color: var(--card-bg-dark);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    }
+
+    .modal-content h2 {
+         font-size: 20px;
+         margin-bottom: 15px;
+         text-align: center;
+         color: var(--text-light);
+          transition: color var(--transition-speed);
+    }
+     body.dark-mode .modal-content h2 {
+         color: var(--text-dark);
+     }
+
+     .modal-content p { /* Style for the description paragraph */
+        font-size: 15px;
+        line-height: 1.6;
+        color: var(--text-light);
+        margin-bottom: 20px;
+         flex-grow: 1; /* Allow paragraph to take space */
+         overflow-y: auto; /* Add scroll if content overflows */
+          transition: color var(--transition-speed);
+    }
+      body.dark-mode .modal-content p {
+         color: var(--text-dark);
+     }
+
+
+    .close-modal {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 28px; /* Larger close icon */
+        font-weight: lighter;
+        cursor: pointer;
+        color: var(--text-light);
+         transition: color var(--transition-speed);
+         border: none; /* Ensure no border */
+         background: none; /* Ensure no background */
+         padding: 5px; /* Click area */
+         line-height: 1;
+    }
+
+    body.dark-mode .close-modal {
+        color: var(--text-dark);
+    }
+     .close-modal:hover {
+         color: var(--danger-red); /* Red on hover */
+     }
+
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 15px; /* Space above footer */
+        border-top: 1px solid var(--border-light); /* Separator line */
+         transition: border-top-color var(--transition-speed);
+    }
+     body.dark-mode .modal-footer {
+        border-top-color: var(--border-dark);
+    }
+
+    .action-btn {
+        padding: 10px 18px; /* More padding */
+        border: none;
+        border-radius: 6px; /* Slightly more rounded */
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color var(--transition-speed), opacity var(--transition-speed);
+        display: inline-flex; /* Align icon and text */
+        align-items: center;
+        gap: 8px; /* Space between icon and text */
+    }
+     .action-btn i {
+         font-size: 1.1em; /* Slightly larger icon */
+     }
+
+    .action-btn.approve-btn { /* Example specific style */
+        background-color: var(--info-blue);
+        color: white;
+    }
+     .action-btn.approve-btn:hover {
+        background-color: #138496; /* Darker blue */
+     }
+
+    .action-btn.reject-btn { /* Style for close/cancel */
+        background-color: #6c757d; /* Grey */
+        color: white;
+    }
+    .action-btn.reject-btn:hover {
+        background-color: #5a6268; /* Darker grey */
+    }
+
+    /* === Toast Notification (Add if needed) === */
+     #toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--card-bg-light); /* White background in light mode */
+        color: var(--text-light); /* Black text in light mode */
+        padding: 15px 25px;
+        border-radius: 50px; /* Pill shape like the image */
+        font-size: 16px;
+        font-weight: 500; /* Slightly bolder text like example */
+        z-index: 2000;
+        opacity: 0;
+        transition: opacity 0.4s ease, transform 0.4s ease, background-color var(--transition-speed), color var(--transition-speed);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        pointer-events: none; /* Prevent interaction */
+        display: flex; /* For icon and text alignment */
+        align-items: center;
+        gap: 12px; /* Space between icon and text */
+        max-width: 90%; /* Ensure it fits on smaller screens */
+    }
+
+    body.dark-mode #toast {
+        background-color: var(--card-bg-dark); /* Dark background in dark mode */
+        color: var(--text-dark); /* Light text in dark mode */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    #toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-10px); /* Animate up slightly */
+    }
+
+     #toast .toast-icon {
+        font-size: 22px; /* Adjust icon size as needed */
+        line-height: 1; /* Ensure icon aligns well vertically */
+    }
+
+    /* Specific styles for toast types (mainly icon color) */
+    #toast.success .toast-icon { color: var(--success-green); }
+    #toast.error .toast-icon { color: var(--danger-red); }
+    #toast.info .toast-icon { color: var(--info-blue); }
+
+    #toast.success { background-color: var(--success-green); color: white; }
+    #toast.error { background-color: var(--danger-red); color: white; }
+    #toast.info { background-color: var(--info-blue); color: white; }
+
+
+    /* === Responsive === */
+    @media (max-width: 768px) {
+        .main-header, .notifications-container {
+            width: 95%; /* Slightly wider on mobile */
+            margin: 15px auto;
+        }
+
+        .header-title {
+            font-size: 20px;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .header-actions button {
+            font-size: 20px;
+        }
+
+        .filter-container {
+            gap: 8px; /* Slightly less gap */
+        }
+        .filter-btn {
+            padding: 7px 12px;
+            font-size: 13px;
+        }
+         .filter-count-badge {
+             font-size: 10px;
+             min-width: 16px;
+             height: 16px;
+             border-radius: 8px;
+             margin-left: 6px;
+         }
+
+        .notification-card {
+            padding: 12px;
+            margin: 10px 0;
+        }
+         .notification-term { font-size: 15px; }
+         .notification-brief { font-size: 13px; }
+         .notification-time { font-size: 10px; top: 30px; }
+         .notification-card .badge { font-size: 10px; padding: 3px 8px; top: 8px; right: 8px;}
+
+        .delete-btn { font-size: 15px; padding: 6px; }
+
+        .modal-content {
+            padding: 20px;
+        }
+         .modal-content h2 { font-size: 18px; }
+         .modal-content p { font-size: 14px; }
+         .action-btn { padding: 8px 14px; font-size: 13px; }
+    }
+
+</style>
+
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-actions">
+            <button class="theme-toggle" id="themeToggle" title="Changer le thème">
+                <i class="fa-light fa-moon"></i>
+            </button>
+            <button class="back-btn" id="backButton" title="Retour">
+                <i class="fa-light fa-arrow-left"></i>
+            </button>
+        </div>
+        <div class="header-title">Notifications</div>
+        <div class="logo">
+            <img src="Logo Light Mode.png" alt="BioTerms Logo" class="logo-img light-mode-logo">
+            <img src="Logo Dark Mode.png" alt="BioTerms Logo" class="logo-img dark-mode-logo">
+        </div>
+    </header>
+
+    <!-- Notifications Container -->
+    <div class="notifications-container">
+        <div class="notifications-header">
+            <h2 class="notifications-title">Vos notifications</h2>
+            <button class="clear-all" id="clearAllBtn">Tout effacer</button>
+        </div>
+
+        <div class="filter-container">
+            <button class="filter-btn active" data-filter="all">
+                Toutes
+                <span class="filter-count-badge" id="count-all" style="display: none;">0</span>
+            </button>
+            <button class="filter-btn" data-filter="approved">
+                Approuvées
+                <span class="filter-count-badge" id="count-approved" style="display: none;">0</span>
+            </button>
+            <button class="filter-btn" data-filter="rejected">
+                Rejetées
+                <span class="filter-count-badge" id="count-rejected" style="display: none;">0</span>
+            </button>
+            <button class="filter-btn" data-filter="new_concept">
+                Nouveautés
+                <span class="filter-count-badge" id="count-new_concept" style="display: none;">0</span>
+            </button>
+        </div>
+
+        <div id="notificationsArea"></div>
+        <div class="no-notifications" id="noNotificationsMessage" style="display: none;">
+            Vous n'avez aucune notification pour le moment.
+        </div>
+        <div id="notificationsLoader" class="notifications-loader">
+            <div class="loader-spinner"></div>
+            <p>Chargement...</p>
+        </div>
+         <button id="refreshNotifications" class="action-btn reject-btn" style="margin: 20px auto 0; display: block;">
+             <i class="fa-light fa-rotate-right"></i> Actualiser
+         </button>
+    </div>
+
+    <!-- Notification Details Modal -->
+    <div class="modal" id="notificationModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="this.closest('.modal').classList.remove('show')">×</button>
+            <h2 id="modalTitle">Détails</h2>
+            <p id="modalDescription">Description...</p>
+            <div class="modal-footer" id="modalFooter">
+                <button class="action-btn reject-btn" onclick="this.closest('.modal').classList.remove('show')">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content">
+            <h2 id="confirmationModalTitle">Confirmation</h2>
+            <p id="confirmationModalMessage">Êtes-vous sûr ?</p>
+            <div class="modal-footer">
+                <button class="action-btn reject-btn" id="confirmationModalCancelBtn">Annuler</button>
+                <button class="action-btn" id="confirmationModalConfirmBtn">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+     <!-- Toast Notification Element -->
+     <div id="toast"></div>
+
+
+    <!-- Appwrite SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@16.0.2"></script>
+
+    <script>
+        // === Appwrite Configuration ===
+        const client = new Appwrite.Client();
+        const account = new Appwrite.Account(client);
+        const databases = new Appwrite.Databases(client);
+        const Query = Appwrite.Query;
+
+        client
+        .setEndpoint("https://fra.cloud.appwrite.io/v1")
+        .setProject("66bdd9ef0022a854dccc");
+
+    const DATABASE_ID = "66bddcb3002ce9c16742";
+    const NOTIFICATIONS_COLLECTION_ID = "67df6419001cc71ede1b";
+
+        let currentFilter = 'all';
+        let currentUserId = null;
+        let notificationCounts = { all: 0, approved: 0, rejected: 0, new_concept: 0, default: 0 };
+
+        const notificationsArea = document.getElementById('notificationsArea');
+        const loader = document.getElementById('notificationsLoader');
+        const noNotificationsMsg = document.getElementById('noNotificationsMessage');
+        const modalElement = document.getElementById('notificationModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalFooter = document.getElementById('modalFooter');
+        const toastElement = document.getElementById('toast');
+
+        // === Confirmation Modal Elements ===
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmationModalTitle = document.getElementById('confirmationModalTitle');
+        const confirmationModalMessage = document.getElementById('confirmationModalMessage');
+        const confirmationModalConfirmBtn = document.getElementById('confirmationModalConfirmBtn');
+        const confirmationModalCancelBtn = document.getElementById('confirmationModalCancelBtn');
+        let currentConfirmAction = null;
+
+
+        function formatDate(dateString) {
+             if (!dateString) return 'Date inconnue';
+             try {
+                 const date = new Date(dateString);
+                 const now = new Date();
+                 const diff = now - date;
+                 const minutes = Math.floor(diff / (60 * 1000));
+                 const hours = Math.floor(diff / (60 * 60 * 1000));
+                 const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+                 if (minutes < 1) return "à l'instant";
+                 if (minutes < 60) return `il y a ${minutes} min`;
+                 if (hours < 24) return `il y a ${hours}h`;
+                 if (days < 7) return `il y a ${days}j`;
+                 return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+             } catch (e) {
+                 console.error("Erreur de formatage de date:", e, dateString);
+                 return 'Date invalide';
+             }
+        }
+
+        function showToast(message, type = 'info', duration = 3000) {
+            if (!toastElement) return;
+            let iconClass = 'fa-light fa-info-circle';
+            if (type === 'success') iconClass = 'fa-light fa-check';
+            else if (type === 'error') iconClass = 'fa-light fa-times-circle';
+            toastElement.innerHTML = `<i class="toast-icon ${iconClass}"></i><span class="toast-message">${message}</span>`;
+            toastElement.className = 'toast';
+            toastElement.classList.add(type);
+            toastElement.classList.add('show');
+            if (toastElement.toastTimeout) clearTimeout(toastElement.toastTimeout);
+            toastElement.toastTimeout = setTimeout(() => toastElement.classList.remove('show'), duration);
+        }
+
+        function updateFilterBadgeDisplay() {
+            console.log("Updating filter badges:", notificationCounts);
+            const countAllEl = document.getElementById('count-all');
+            const countApprovedEl = document.getElementById('count-approved');
+            const countRejectedEl = document.getElementById('count-rejected');
+            const countNewConceptEl = document.getElementById('count-new_concept');
+            if (countAllEl) {
+                countAllEl.textContent = notificationCounts.all > 0 ? notificationCounts.all : '';
+                countAllEl.style.display = notificationCounts.all > 0 ? 'inline-flex' : 'none';
+            }
+            if (countApprovedEl) {
+                countApprovedEl.textContent = notificationCounts.approved > 0 ? notificationCounts.approved : '';
+                countApprovedEl.style.display = notificationCounts.approved > 0 ? 'inline-flex' : 'none';
+            }
+            if (countRejectedEl) {
+                countRejectedEl.textContent = notificationCounts.rejected > 0 ? notificationCounts.rejected : '';
+                countRejectedEl.style.display = notificationCounts.rejected > 0 ? 'inline-flex' : 'none';
+            }
+            if (countNewConceptEl) {
+                countNewConceptEl.textContent = notificationCounts.new_concept > 0 ? notificationCounts.new_concept : '';
+                countNewConceptEl.style.display = notificationCounts.new_concept > 0 ? 'inline-flex' : 'none';
+            }
+            try {
+                localStorage.setItem('notificationStatusChanged', Date.now().toString());
+            } catch (e) { console.error("Error setting localStorage:", e); }
+        }
+
+        function applyFilter(filter) {
+            currentFilter = filter;
+            const cards = document.querySelectorAll('.notification-card');
+            let visibleCount = 0;
+            cards.forEach(card => {
+                const matchesFilter = (filter === 'all' || card.classList.contains(filter));
+                const isAnimatingOut = card.style.height === '0px';
+                card.style.display = (matchesFilter && !isAnimatingOut) ? 'flex' : 'none';
+                if (matchesFilter && !isAnimatingOut) visibleCount++;
+            });
+            const totalCardsPresent = notificationsArea.childElementCount;
+            noNotificationsMsg.style.display = (visibleCount === 0 && totalCardsPresent > 0) || totalCardsPresent === 0 ? 'block' : 'none';
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === filter));
+        }
+
+        async function markNotificationAsRead(notificationId, type, cardElement) {
+            try {
+                await databases.updateDocument(DATABASE_ID, NOTIFICATIONS_COLLECTION_ID, notificationId, { is_read: true });
+                notificationCounts.all = Math.max(0, notificationCounts.all - 1);
+                const safeType = type || 'default';
+                if (notificationCounts.hasOwnProperty(safeType)) notificationCounts[safeType] = Math.max(0, notificationCounts[safeType] - 1);
+                updateFilterBadgeDisplay();
+                if (cardElement) {
+                    cardElement.classList.remove('unread');
+                    cardElement.classList.add('read');
+                    cardElement.style.fontWeight = 'normal';
+                    cardElement.style.backgroundColor = '';
+                    const deleteBtn = cardElement.querySelector('.delete-btn');
+                    if(deleteBtn) deleteBtn.dataset.notificationRead = 'true';
+                }
+            } catch (error) {
+                console.error(`Error marking notification ${notificationId} as read:`, error);
+                showToast("Erreur lors du marquage comme lu.", "error");
+            }
+        }
+
+        async function deleteNotification(notificationId) {
+            try {
+                await databases.deleteDocument(DATABASE_ID, NOTIFICATIONS_COLLECTION_ID, notificationId);
+                return true;
+            } catch (error) {
+                console.error(`Error deleting notification ${notificationId}:`, error);
+                showToast("Erreur lors de la suppression.", "error");
+                return false;
+            }
+        }
+
+        async function showNotificationDetails(card) {
+            const deleteButton = card.querySelector('.delete-btn');
+            if (!deleteButton) return;
+            const notificationId = deleteButton.dataset.notificationId;
+            const notificationType = deleteButton.dataset.notificationType || 'default';
+            const wasRead = deleteButton.dataset.notificationRead === 'true';
+            if (!wasRead) await markNotificationAsRead(notificationId, notificationType, card);
+
+            modalTitle.textContent = "Chargement...";
+            modalDescription.textContent = "";
+            modalFooter.innerHTML = `<button class="action-btn reject-btn" onclick="modalElement.classList.remove('show')">Fermer</button>`;
+            modalElement.classList.add('show');
+            try {
+                const notification = await databases.getDocument(DATABASE_ID, NOTIFICATIONS_COLLECTION_ID, notificationId);
+                modalTitle.textContent = notification.title || 'Détails de la notification';
+                modalDescription.textContent = notification.description || 'Aucune description disponible.';
+                let actionButtonsHTML = '';
+                switch (notification.type) {
+                    case 'approved': case 'new_concept':
+                         if (notification.concept_id) actionButtonsHTML += `<button class="action-btn approve-btn" onclick="window.location.href='app.html#concept-${notification.concept_id}'"><i class="fa-light fa-eye"></i> Voir Concept</button>`;
+                        break;
+                    case 'rejected':
+                        actionButtonsHTML += `<button class="action-btn" style="background-color: var(--warning-orange); color: white;" onclick="window.location.href='add-concept.html'"><i class="fa-light fa-plus"></i> Suggérer Autre</button>`;
+                        break;
+                }
+                 actionButtonsHTML += `<button class="action-btn reject-btn" onclick="modalElement.classList.remove('show')">Fermer</button>`;
+                modalFooter.innerHTML = actionButtonsHTML;
+            } catch (error) {
+                console.error("Error fetching notification details:", error);
+                modalTitle.textContent = "Erreur";
+                modalDescription.textContent = "Impossible de charger les détails.";
+            }
+        }
+
+        async function loadNotifications() {
+            loader.style.display = 'block';
+            noNotificationsMsg.style.display = 'none';
+            notificationsArea.innerHTML = '';
+            notificationCounts = { all: 0, approved: 0, rejected: 0, new_concept: 0, default: 0 };
+            try {
+                const user = await account.get();
+                currentUserId = user.$id;
+                const response = await databases.listDocuments(DATABASE_ID, NOTIFICATIONS_COLLECTION_ID, [Query.equal('user_id', user.$id), Query.orderDesc('created_at'), Query.limit(100)]);
+                loader.style.display = 'none';
+                if (response.total === 0) {
+                    noNotificationsMsg.style.display = 'block';
+                    updateFilterBadgeDisplay(); return;
+                }
+                response.documents.forEach(notification => {
+                    const type = notification.type || 'default';
+                    const isRead = notification.is_read || false;
+                    if (!isRead) {
+                        notificationCounts.all++;
+                        if (notificationCounts.hasOwnProperty(type)) notificationCounts[type]++; else notificationCounts.default++;
+                    }
+                    const notificationEl = document.createElement('div');
+                    notificationEl.className = `notification-card ${type} ${isRead ? 'read' : 'unread'}`;
+                    let badgeText = 'Info';
+                    switch (type) { case 'approved': badgeText = 'Approuvé'; break; case 'rejected': badgeText = 'Rejeté'; break; case 'new_concept': badgeText = 'Nouveau'; break; }
+                    notificationEl.innerHTML = `
+                        <span class="badge">${badgeText}</span>
+                        <div class="notification-time">${formatDate(notification.created_at)}</div>
+                        <div class="notification-header"><div class="notification-term">${notification.title || 'Notification'}</div></div>
+                        <div class="notification-body"><div class="notification-brief">${notification.description || ''}</div></div>
+                        <div class="notification-footer">
+                            <button class="delete-btn" title="Supprimer cette notification" data-notification-id="${notification.$id}" data-notification-type="${type}" data-notification-read="${isRead}">
+                                <i class="fa-light fa-trash"></i>
+                            </button>
+                        </div>`;
+                    notificationsArea.appendChild(notificationEl);
+                });
+                updateFilterBadgeDisplay();
+                applyFilter(currentFilter);
+            } catch (error) {
+                console.error("Error loading notifications:", error);
+                loader.style.display = 'none';
+                notificationsArea.innerHTML = `<div class="no-notifications" style="color: var(--danger-red);">Erreur lors du chargement.</div>`;
+                if (document.getElementById('count-all')) {
+                    notificationCounts = { all: 0, approved: 0, rejected: 0, new_concept: 0, default: 0 };
+                    updateFilterBadgeDisplay();
+                }
+                if (error.code === 401) {
+                    showToast("Session expirée. Veuillez vous reconnecter.", "error");
+                    setTimeout(() => window.location.href = 'login.html', 1500);
+                }
+            }
+        }
+
+        // === Confirmation Modal Logic ===
+        function showConfirmationModal(title, message, onConfirmCallback, confirmButtonText = "Confirmer", confirmButtonIsDestructive = false) {
+            confirmationModalTitle.textContent = title;
+            confirmationModalMessage.textContent = message;
+            confirmationModalConfirmBtn.textContent = confirmButtonText;
+
+            confirmationModalConfirmBtn.className = 'action-btn'; // Reset to base class
+            if (confirmButtonIsDestructive) {
+                confirmationModalConfirmBtn.style.backgroundColor = 'var(--danger-red)';
+                confirmationModalConfirmBtn.style.color = 'white';
+            } else {
+                confirmationModalConfirmBtn.style.backgroundColor = 'var(--info-blue)'; // Default confirm
+                confirmationModalConfirmBtn.style.color = 'white';
+            }
+
+            currentConfirmAction = onConfirmCallback;
+            confirmationModal.classList.add('show');
+        }
+
+        confirmationModalConfirmBtn.addEventListener('click', () => {
+            if (currentConfirmAction) {
+                currentConfirmAction();
+            }
+            confirmationModal.classList.remove('show');
+            currentConfirmAction = null;
+        });
+
+        confirmationModalCancelBtn.addEventListener('click', () => {
+            confirmationModal.classList.remove('show');
+            currentConfirmAction = null;
+        });
+
+
+        // === Event Listeners ===
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', () => applyFilter(btn.dataset.filter)));
+        document.getElementById('refreshNotifications').addEventListener('click', loadNotifications);
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            document.querySelector('#themeToggle i').className = isDarkMode ? 'fa-light fa-sun' : 'fa-light fa-moon';
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            document.querySelector('.light-mode-logo').style.display = isDarkMode ? 'none' : 'block';
+            document.querySelector('.dark-mode-logo').style.display = isDarkMode ? 'block' : 'none';
+        });
+        document.getElementById('backButton').addEventListener('click', () => window.history.back());
+
+        notificationsArea.addEventListener('click', async (e) => {
+            const target = e.target;
+            const deleteButton = target.closest('.delete-btn');
+            const notificationCard = target.closest('.notification-card');
+
+            if (deleteButton && notificationCard) {
+                e.stopPropagation();
+                const notificationId = deleteButton.dataset.notificationId;
+                const notificationType = deleteButton.dataset.notificationType || 'default';
+                const wasRead = deleteButton.dataset.notificationRead === 'true';
+
+                showConfirmationModal(
+                    "Confirmer la suppression",
+                    "Voulez-vous vraiment supprimer cette notification ?",
+                    async () => { // onConfirmCallback
+                        notificationCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease, height 0.3s ease, margin 0.3s ease, padding 0.3s ease';
+                        notificationCard.style.opacity = '0';
+                        notificationCard.style.transform = 'scale(0.95)';
+                        notificationCard.style.height = `${notificationCard.offsetHeight}px`;
+
+                        setTimeout(async () => {
+                            const success = await deleteNotification(notificationId);
+                            if (success) {
+                                requestAnimationFrame(() => {
+                                    notificationCard.style.height = '0';
+                                    notificationCard.style.paddingTop = '0';
+                                    notificationCard.style.paddingBottom = '0';
+                                    notificationCard.style.marginTop = '0';
+                                    notificationCard.style.marginBottom = '0';
+                                    notificationCard.style.borderWidth = '0';
+                                });
+                                if (!wasRead) {
+                                    notificationCounts.all = Math.max(0, notificationCounts.all - 1);
+                                    if (notificationCounts.hasOwnProperty(notificationType)) {
+                                        notificationCounts[notificationType] = Math.max(0, notificationCounts[notificationType] - 1);
+                                    }
+                                    updateFilterBadgeDisplay();
+                                }
+                                setTimeout(() => {
+                                    notificationCard.remove();
+                                    if (notificationsArea.childElementCount === 0) noNotificationsMsg.style.display = 'block';
+                                    applyFilter(currentFilter);
+                                    showToast("Notification supprimée.", 'success');
+                                }, 300);
+                            } else {
+                                notificationCard.style.opacity = '1';
+                                notificationCard.style.transform = 'scale(1)';
+                                notificationCard.style.height = '';
+                            }
+                        }, 50);
+                    },
+                    "Supprimer", // confirmButtonText
+                    true // confirmButtonIsDestructive
+                );
+
+            } else if (notificationCard) {
+                showNotificationDetails(notificationCard);
+            }
+        });
+
+        document.getElementById('clearAllBtn').addEventListener('click', async () => {
+            if (!currentUserId) { showToast("Utilisateur non identifié.", "error"); return; }
+
+            const allCards = notificationsArea.querySelectorAll('.notification-card');
+             if (allCards.length === 0) {
+                 showToast("Aucune notification à supprimer.", "info");
+                 return;
+             }
+
+            showConfirmationModal(
+                "Confirmer la suppression totale",
+                "Supprimer TOUTES vos notifications ? Cette action est irréversible.",
+                async () => { // onConfirmCallback
+                    allCards.forEach((card, index) => {
+                        card.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out';
+                        card.style.transitionDelay = `${index * 0.03}s`;
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateX(-30px)';
+                    });
+                    await new Promise(resolve => setTimeout(resolve, 100 + allCards.length * 30));
+                    try {
+                        let notificationsToDeleteIDs = [];
+                        let offset = 0; const limit = 50; let response;
+                        do {
+                            response = await databases.listDocuments(DATABASE_ID, NOTIFICATIONS_COLLECTION_ID, [Query.equal('user_id', currentUserId), Query.limit(limit), Query.offset(offset), Query.select(['$id'])]);
+                            notificationsToDeleteIDs = notificationsToDeleteIDs.concat(response.documents.map(d => d.$id));
+                            offset += limit;
+                        } while (response.documents.length >= limit);
+
+                        if (notificationsToDeleteIDs.length > 0) {
+                            const deletePromises = notificationsToDeleteIDs.map(id => databases.deleteDocument(DATABASE_ID, NOTIFICATIONS_COLLECTION_ID, id));
+                            const results = await Promise.allSettled(deletePromises);
+                            const failureCount = results.filter(r => r.status === 'rejected').length;
+                            if (failureCount > 0) {
+                                showToast(`Erreur lors de la suppression de ${failureCount} notification(s).`, 'error');
+                                setTimeout(loadNotifications, 1500);
+                            } else {
+                                showToast("Toutes les notifications ont été supprimées.", 'success');
+                                notificationsArea.innerHTML = '';
+                                noNotificationsMsg.style.display = 'block';
+                                notificationCounts = { all: 0, approved: 0, rejected: 0, new_concept: 0, default: 0 };
+                                updateFilterBadgeDisplay();
+                            }
+                        } else {
+                            notificationsArea.innerHTML = '';
+                            noNotificationsMsg.style.display = 'block';
+                            notificationCounts = { all: 0, approved: 0, rejected: 0, new_concept: 0, default: 0 };
+                            updateFilterBadgeDisplay();
+                        }
+                    } catch (error) {
+                        console.error("Error during Clear All operation:", error);
+                        showToast("Une erreur est survenue lors de la suppression.", 'error');
+                        allCards.forEach(card => { card.style.transition = ''; card.style.opacity = '1'; card.style.transform = 'translateX(0)'; });
+                        setTimeout(loadNotifications, 1500);
+                    }
+                },
+                "Tout supprimer", // confirmButtonText
+                true // confirmButtonIsDestructive
+            );
+        });
+
+        // === Initialisation ===
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDarkModeInitially = savedTheme === 'dark' || (!savedTheme && prefersDark);
+            if (isDarkModeInitially) {
+                document.body.classList.add('dark-mode');
+                document.querySelector('#themeToggle i').className = 'fa-light fa-sun';
+            } else {
+                 document.querySelector('#themeToggle i').className = 'fa-light fa-moon';
+            }
+            document.querySelector('.light-mode-logo').style.display = isDarkModeInitially ? 'none' : 'block';
+            document.querySelector('.dark-mode-logo').style.display = isDarkModeInitially ? 'block' : 'none';
+            loadNotifications();
+        });
+    </script>
+</body>
+</html>

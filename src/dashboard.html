@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord Admin</title>
+    <link rel="shortcut icon" type="x-icon" href="Logo.png">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.4.2/uicons-thin-rounded/css/uicons-thin-rounded.css">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.4.2/uicons-regular-straight/css/uicons-regular-straight.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.4.2/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel="stylesheet" data-purpose="Layout StyleSheet" title="Web Awesome"
+        href="/css/app-wa-cc491567646eab1188c6538ebc462e7d.css?vsn=d">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/sharp-solid.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.8/css/sharp-light.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <style>
+        :root {
+            /* Couleurs du mode clair */
+            --bg-primary: #ffffff;
+            --bg-secondary: #fff;
+            --text-primary: #333333;
+            --text-secondary: #333;
+            --border-color: #dee2e6;
+            --card-bg: #ffffff;
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+        }
+
+        body.dark-mode {
+            /* Couleurs du mode sombre */
+            --bg-primary: #333333;
+            --bg-secondary: #333;
+            --text-primary: #ffffff;
+            --text-secondary: #fff;
+            --border-color: #555555;
+            --card-bg: #444444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        /* Contrôles d'en-tête */
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .stat-card,
+        .section {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .dark-mode-btn {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            background-color: transparent;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Styles du mode sombre */
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        body.dark-mode .header,
+        body.dark-mode .stat-card,
+        body.dark-mode .section {
+            background-color: #2d2d2d;
+            color: #ffffff;
+        }
+
+        body.dark-mode th {
+            background-color: #1a1a1a;
+        }
+
+        body.dark-mode .modal-content {
+            background-color: #2d2d2d;
+            color: #ffffff;
+        }
+
+        /* Styles des notifications (toast) */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 16px 30px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+        }
+
+        body.dark-mode .toast {
+            background-color: #333333;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        .toast.success i {
+            color: var(--success-color);
+        }
+
+        .toast.error i {
+            color: var(--danger-color);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .back-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background-color: transparent;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .section {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section h2 {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+            background-color: var(--bg-secondary);
+        }
+
+        th,
+        td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+
+        td {
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .action-btn {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 0.25rem;
+        }
+
+        .back-btn:hover,
+        .dark-mode-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Chiffres des statistiques */
+        .stat-card .number {
+            color: var(--primary-color);
+        }
+
+        /* Conserver les couleurs des boutons d'action */
+        .approve-btn {
+            background-color: var(--success-color);
+            color: #fff;
+        }
+
+        .reject-btn {
+            background-color: var(--danger-color);
+            color: #fff;
+        }
+
+        .role-btn {
+            background-color: var(--warning-color);
+            color: var(--text-primary);
+        }
+
+        /* État au survol des lignes du tableau */
+        tr:hover {
+            background-color: var(--border-color);
+        }
+
+        /* Champs de saisie s'il y en a */
+        input,
+        select,
+        textarea {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .back-btn,
+        .dark-mode-btn {
+            background-color: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .approve-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .reject-btn {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .role-btn {
+            background-color: var(--warning-color);
+            color: var(--text-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            margin: 10% auto;
+            padding: 2rem;
+            max-width: 500px;
+            border-radius: 8px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        .edit-btn {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        #editConceptModal .modal-content {
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Styles pour l'interface des motifs de rejet */
+        #reasonsList div:hover {
+            background-color: var(--border-color);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Tableau de bord Administrateur</h1>
+            <div class="header-controls">
+                <button class="dark-mode-btn" id="darkModeToggle">
+                    <i class="fa-light fa-moon"></i>
+                </button>
+                <button class="back-btn" onclick="window.location.href='app.html'">
+                    <i class="fa-light fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Utilisateurs</h3>
+                <div class="number" id="userCount">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Concepts en attente</h3>
+                <div class="number" id="pendingCount">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Concepts approuvés</h3>
+                <div class="number" id="approvedCount">-</div>
+            </div>
+        </div>
+        <!-- Dans la section "Gestion des utilisateurs", modifiez la structure de la table -->
+        <div class="section">
+            <h2>Concepts en attente</h2>
+            <div class="table-container">
+                <table id="pendingConceptsTable">
+                    <thead>
+                        <tr>
+                            <th>Terme</th>
+                            <th>Définition</th>
+                            <th>Soumis par</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Ajout de la nouvelle fenêtre modale Modifier Concept -->
+        <div id="editConceptModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeEditModal()">&times;</span>
+                <h2>Modifier le concept</h2>
+                <form id="editConceptForm">
+                    <input type="hidden" id="editConceptId">
+                    <div class="form-group">
+                        <label for="editTerm">Terme</label>
+                        <input type="text" id="editTerm" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDefinition">Définition</label>
+                        <textarea id="editDefinition" required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="action-btn reject-btn" onclick="closeEditModal()">Annuler</button>
+                        <button type="submit" class="action-btn approve-btn">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Dans la section "Gestion des utilisateurs", modifiez la structure de la table -->
+        <div class="section">
+            <h2>Gestion des utilisateurs</h2>
+            <div class="table-container">
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>ID Utilisateur</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Confirmation</h2>
+            <p id="modalMessage"></p>
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                <button class="action-btn reject-btn" id="modalCancelBtn">Annuler</button>
+                <button class="action-btn approve-btn" id="modalConfirmBtn">Confirmer</button>
+            </div>
+        </div>
+    </div>
+    <div id="toast" class="toast">
+        <i class="fa-light"></i>
+        <span id="toastMessage"></span>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@16.0.2"></script>
+        
+
+    <script type="module">
+       const client = new window.Appwrite.Client();
+    client
+        .setEndpoint("https://fra.cloud.appwrite.io/v1")
+        .setProject("66bdd9ef0022a854dccc");
+
+
+    const databases = new window.Appwrite.Databases(client);
+    const account = new window.Appwrite.Account(client);
+
+    const termsDatabaseId = "66bddcb3002ce9c16742";
+    const termsCollectionId = "66bddd002e43f7d4f1"; // ملاحظة: هادي غتستعمل القيمة اللي ف .env
+    const pendingConceptsCollectionId = "678ac138000835c30413";
+    const userRolesCollectionId = "678ab074003692c16eb3";
+    const userConceptsCollectionId = "676dbc8e00107e180a0c";
+    const userProfilesCollectionId = "66ff9b530001b9085d1a";
+    const NOTIFICATIONS_COLLECTION_ID = "67df6419001cc71ede1b";
+
+        // === Variables globales ===
+        let currentUserId = null;
+        let currentUserRole = null;
+        const processingConcepts = new Set();
+
+        // === Gestion du mode sombre ===
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        const darkMode = localStorage.getItem('darkMode');
+        if (darkMode === 'enabled') {
+            body.classList.add('dark-mode');
+            darkModeToggle.innerHTML = '<i class="fa-light fa-sun"></i>';
+        } else {
+            darkModeToggle.innerHTML = '<i class="fa-light fa-moon"></i>';
+        }
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                darkModeToggle.innerHTML = '<i class="fa-light fa-sun"></i>';
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                darkModeToggle.innerHTML = '<i class="fa-light fa-moon"></i>';
+                localStorage.removeItem('darkMode');
+            }
+        });
+
+        // === Fonction d'affichage des notifications Toast ===
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const icon = toast.querySelector('i');
+            toast.className = 'toast';
+            icon.className = 'fa-light';
+            if (type === 'success') {
+                icon.classList.add('fa-check'); toast.classList.add('success');
+            } else if (type === 'error') {
+                icon.classList.add('fa-xmark'); toast.classList.add('error');
+            } else {
+                icon.classList.add('fa-info'); toast.classList.add('info');
+            }
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        // === Vérification des permissions Admin ===
+        async function checkAdminAccess() {
+            try {
+                const user = await account.get();
+                currentUserId = user.$id;
+                const response = await databases.listDocuments(
+                    termsDatabaseId,
+                    userRolesCollectionId,
+                    [window.Appwrite.Query.equal('userId', user.$id)]
+                );
+                if (response.documents.length === 0 || response.documents[0].role !== 'admin') {
+                    console.warn('Accès refusé: L\'utilisateur n\'est pas administrateur.');
+                    window.location.href = 'app.html';
+                    return false;
+                }
+                currentUserRole = response.documents[0].role;
+                console.log('Accès administrateur confirmé.'); // تم تغيير الرسالة للتأكيد
+                return true;
+            } catch (error) {
+                console.error('Erreur lors de la vérification des permissions admin:', error);
+                window.location.href = 'login.html';
+                return false;
+            }
+        }
+
+        // === Chargement des statistiques globales ===
+        async function loadStats() {
+            try {
+                const usersResponse = await databases.listDocuments(termsDatabaseId, userRolesCollectionId, [Appwrite.Query.limit(1)]);
+                document.getElementById('userCount').textContent = usersResponse.total;
+                const pendingResponse = await databases.listDocuments(
+                    termsDatabaseId,
+                    pendingConceptsCollectionId,
+                    [Appwrite.Query.equal('status', 'pending'), Appwrite.Query.limit(1)]
+                );
+                document.getElementById('pendingCount').textContent = pendingResponse.total;
+                const approvedResponse = await databases.listDocuments(termsDatabaseId, termsCollectionId, [Appwrite.Query.limit(1)]);
+                document.getElementById('approvedCount').textContent = approvedResponse.total;
+            } catch (error) {
+                console.error('Erreur lors du chargement des statistiques:', error);
+                showToast('Erreur lors du chargement des statistiques.', 'error');
+                document.getElementById('userCount').textContent = '-';
+                document.getElementById('pendingCount').textContent = '-';
+                document.getElementById('approvedCount').textContent = '-';
+            }
+        }
+
+        // === Fonctions pour la fenêtre modale d'édition ===
+        window.openEditModal = async function (conceptId) {
+            try {
+                const concept = await databases.getDocument(
+                    termsDatabaseId,
+                    pendingConceptsCollectionId,
+                    conceptId
+                );
+                document.getElementById('editConceptId').value = conceptId;
+                document.getElementById('editTerm').value = concept.term;
+                document.getElementById('editDefinition').value = concept.definition;
+                document.getElementById('editConceptModal').style.display = 'block';
+            } catch (error) {
+                console.error('Erreur lors du chargement du concept pour édition:', error);
+                showToast('Erreur lors du chargement des détails du concept.', 'error');
+            }
+        };
+        window.closeEditModal = function () {
+            document.getElementById('editConceptModal').style.display = 'none';
+            document.getElementById('editConceptForm').reset();
+            document.getElementById('editConceptId').value = '';
+        };
+        document.getElementById('editConceptForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const conceptId = document.getElementById('editConceptId').value;
+            const term = document.getElementById('editTerm').value.trim();
+            const definition = document.getElementById('editDefinition').value.trim();
+            if (!term || !definition) {
+                showToast('Le terme et la définition ne peuvent pas être vides.', 'error'); return;
+            }
+            try {
+                await databases.updateDocument(
+                    termsDatabaseId,
+                    pendingConceptsCollectionId,
+                    conceptId, { term: term, definition: definition }
+                );
+                closeEditModal();
+                showToast('Concept modifié avec succès!', 'success');
+                loadPendingConcepts();
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour du concept:', error);
+                showToast('Erreur lors de la modification du concept.', 'error');
+            }
+        });
+
+        // === Chargement de la liste des concepts en attente ===
+        async function loadPendingConcepts() {
+            try {
+                const response = await databases.listDocuments(
+                    termsDatabaseId,
+                    pendingConceptsCollectionId,
+                    [
+                        Appwrite.Query.equal('status', 'pending'),
+                        Appwrite.Query.orderDesc('submitted_at')
+                    ]
+                );
+                const tbody = document.querySelector('#pendingConceptsTable tbody');
+                tbody.innerHTML = '';
+                if (response.documents.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Aucun concept en attente.</td></tr>'; return;
+                }
+                for (const concept of response.documents) {
+                    const tr = document.createElement('tr');
+                    const isProcessing = processingConcepts.has(concept.$id);
+                    const submittedDate = concept.submitted_at ? new Date(concept.submitted_at).toLocaleDateString('fr-FR') : 'Date inconnue';
+                    tr.innerHTML = `
+                    <td>${concept.term || 'Non défini'}</td>
+                    <td>${concept.definition || 'Non défini'}</td>
+                    <td>${concept.userId || 'Inconnu'}</td>
+                    <td>${submittedDate}</td>
+                    <td>
+                        <button class="action-btn edit-btn" title="Modifier" onclick="openEditModal('${concept.$id}')" ${isProcessing ? 'disabled' : ''}>
+                            <i class="fa-light fa-pen"></i>
+                        </button>
+                        <button class="action-btn approve-btn" title="Approuver" onclick="approveConcept('${concept.$id}')" ${isProcessing ? 'disabled' : ''}>
+                            <i class="fa-light fa-check"></i>
+                        </button>
+                        <button class="action-btn reject-btn" title="Rejeter" onclick="rejectConcept('${concept.$id}')" ${isProcessing ? 'disabled' : ''}>
+                            <i class="fa-light fa-xmark"></i>
+                        </button>
+                    </td>
+                `;
+                    tbody.appendChild(tr);
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des concepts en attente:', error);
+                showToast('Erreur lors du chargement des concepts en attente.', 'error');
+                const tbody = document.querySelector('#pendingConceptsTable tbody');
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: red;">Erreur de chargement.</td></tr>';
+            }
+        }
+
+        // === Chargement de la liste des utilisateurs ===
+        async function loadUsers() {
+            try {
+                // *** FIX: Removed sorting by 'name', using default order or sort by '$createdAt' ***
+                const response = await databases.listDocuments(
+                    termsDatabaseId,
+                    userRolesCollectionId,
+                    [
+                        Appwrite.Query.orderDesc('$createdAt') // Optionnel: فرز حسب تاريخ الإنشاء
+                        // [] // أو بدون فرز
+                    ]
+                );
+                const tbody = document.querySelector('#usersTable tbody');
+                tbody.innerHTML = '';
+                if (response.documents.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Aucun utilisateur trouvé.</td></tr>'; return;
+                }
+                for (const userRole of response.documents) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                    <td>${userRole.userId || 'ID manquant'}</td>
+                    <td>${userRole.nom || 'Nom non défini'}</td>
+                    <td>${userRole.email || 'Email non défini'}</td>
+                `;
+                    tbody.appendChild(tr);
+                }
+            } catch (error) {
+                // Log l'erreur spécifique retournée par Appwrite
+                console.error('Erreur lors du chargement des utilisateurs:', error);
+                showToast('Erreur lors du chargement de la liste des utilisateurs.', 'error');
+                const tbody = document.querySelector('#usersTable tbody');
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color: red;">Erreur de chargement.</td></tr>';
+            }
+        }
+
+        // === Approuver un concept ===
+        async function approveConcept(conceptId) {
+            if (processingConcepts.has(conceptId)) return;
+            try {
+                if (!await checkAdminAccess()) return;
+                processingConcepts.add(conceptId);
+                const approveBtn = document.querySelector(`button[onclick="approveConcept('${conceptId}')"]`);
+                if (approveBtn) approveBtn.disabled = true;
+
+                const pendingConcept = await databases.getDocument(
+                    termsDatabaseId,
+                    pendingConceptsCollectionId,
+                    conceptId
+                );
+                if (pendingConcept.status === 'approved') {
+                    showToast('Ce concept a déjà été approuvé.', 'info'); return;
+                }
+                const nowISO = new Date().toISOString();
+
+                // 1. احصل على القيم الضرورية من pendingConcept
+                const termToApprove = pendingConcept.term;
+                const definitionToApprove = pendingConcept.definition;
+                const originalUserId = pendingConcept.userId; // userId لصاحب المصطلح
+                const groupeFromPending = pendingConcept.groupe;
+
+                let finalGroupeValue = groupeFromPending;
+                if (termToApprove && typeof termToApprove === 'string' && termToApprove.trim() !== '') {
+                    finalGroupeValue = termToApprove.trim().charAt(0).toUpperCase();
+                } else if (groupeFromPending) {
+                    finalGroupeValue = groupeFromPending;
+                } else {
+                    finalGroupeValue = null;
+                }
+
+                // 2. إنشاء المفهوم الموافق عليه في الكوليكشن الرئيسية
+                const approvedTerm = await databases.createDocument(
+                    termsDatabaseId,
+                    termsCollectionId,
+                    'unique()',
+                    {
+                        term: termToApprove,
+                        definition: definitionToApprove,
+                        userId: originalUserId,
+                        groupe: finalGroupeValue,
+                        approvedAt: nowISO,
+                        // أضف أي حقول أخرى ضرورية هنا
+                    }
+                );
+                const newApprovedConceptId = approvedTerm.$id; // ID ديال المفهوم الموافق عليه
+
+                // 3. Créer l'entrée dans userConcepts pour l'auteur original (déverrouillé)
+                try {
+                    await databases.createDocument(
+                        termsDatabaseId,
+                        userConceptsCollectionId, 'unique()',
+                        { userId: originalUserId, conceptId: newApprovedConceptId, isLocked: false }
+                    );
+                } catch (userConceptError) { console.error(`Erreur création userConcept pour ${originalUserId}:`, userConceptError); }
+
+                // 4. إنشاء إشعار الموافقة للمستخدم الأصلي
+                try {
+                    await databases.createDocument(
+                        termsDatabaseId, NOTIFICATIONS_COLLECTION_ID, 'unique()',
+                        {
+                            user_id: originalUserId, // المستخدم اللي ضاف المفهوم
+                            concept_id: newApprovedConceptId, // ID ديال المفهوم الموافق عليه
+                            type: 'approved',
+                            title: `Votre concept a été approuvé : "${termToApprove}"`,
+                            description: `Félicitations ! Votre concept "${termToApprove}" a été validé et ajouté. Vous pouvez maintenant le consulter.`,
+                            is_read: false,
+                            created_at: nowISO,
+                            // buttons: JSON.stringify([{ text: "Voir Concept", action: `concept:${newApprovedConceptId}` }]) // مثال إذا بغيتي تستعمل حقل buttons
+                        }
+                    );
+                } catch (notifError) { console.error(`Erreur création notification 'approved' pour ${originalUserId}:`, notifError); }
+
+                // 5. إنشاء إشعارات "مفهوم جديد" لباقي المستخدمين
+                try {
+                    const allUsersResponse = await databases.listDocuments(
+                        termsDatabaseId,
+                        userRolesCollectionId, // نفترض أن هاد الكوليكشن فيها ID ديال كل المستخدمين
+                        [Appwrite.Query.limit(5000)] // جيب كل المستخدمين (عدل الحد الأقصى إذا لزم الأمر)
+                    );
+
+                    const otherUserIds = allUsersResponse.documents
+                        .map(doc => doc.userId) // افترض أن حقل ID المستخدم هو 'userId'
+                        .filter(id => id !== originalUserId); // استثني المستخدم الأصلي
+
+                    const notificationPromises = otherUserIds.map(userId => {
+                        return databases.createDocument(
+                            termsDatabaseId, NOTIFICATIONS_COLLECTION_ID, 'unique()',
+                            {
+                                user_id: userId, // المستخدم الآخر
+                                concept_id: newApprovedConceptId,
+                                type: 'new_concept',
+                                title: `Nouveau concept disponible : "${termToApprove}"`,
+                                description: `Un nouveau concept intitulé "${termToApprove}" a été ajouté. Découvrez-le maintenant !`,
+                                is_read: false,
+                                created_at: nowISO,
+                                // buttons: JSON.stringify([{ text: "Voir Concept", action: `concept:${newApprovedConceptId}` }])
+                            }
+                        ).catch(err => console.error(`Erreur création notification 'new_concept' pour ${userId}:`, err));
+                    });
+                    await Promise.allSettled(notificationPromises); // انتظر كل الإشعارات تتصاوب
+
+                } catch (usersError) {
+                    console.error("Erreur lors de la récupération des utilisateurs pour les notifications 'new_concept':", usersError);
+                }
+
+
+                // 6. Mettre à jour le statut du concept en attente à 'approved'
+                await databases.updateDocument(
+                    termsDatabaseId, pendingConceptsCollectionId, conceptId,
+                    { status: 'approved', approved_at: nowISO }
+                );
+
+                showToast('Concept approuvé avec succès!', 'success');
+                loadStats();
+                loadPendingConcepts();
+
+            } catch (error) {
+                console.error('Erreur globale lors de l\'approbation du concept:', error);
+                showToast('Une erreur est survenue lors de l\'approbation.', 'error');
+            } finally {
+                processingConcepts.delete(conceptId);
+                const approveBtn = document.querySelector(`button[onclick="approveConcept('${conceptId}')"]`);
+                if (approveBtn) approveBtn.disabled = false;
+            }
+        }
+
+        // === Motifs de rejet prédéfinis ===
+        const REJECTION_REASONS = [
+            "Le concept n'est pas clair ou précis. Essayez de mieux expliquer.",
+            "Le concept est redondant avec un autre existant. Essayez de proposer une idée nouvelle.",
+            "Le concept n'est pas pertinent pour le domaine scientifique. Nous encourageons des idées plus précises scientifiquement.",
+            "La définition est incomplète ou peu claire. Veuillez clarifier la définition de manière plus précise.",
+            "La source n'est pas fiable ou n'est pas soutenue scientifiquement. Essayez de soutenir votre concept avec des sources fiables."
+        ];
+
+        // === Afficher la modale de sélection du motif de rejet ===
+        async function showRejectionReasonsModal() {
+            return new Promise((resolve) => {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.style.display = 'block';
+                modal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <span class="close-modal" onclick="closeAndResolve(null)">×</span>
+                    <h2>Choisissez un motif de rejet</h2>
+                    <div id="reasonsList" style="margin: 1rem 0; max-height: 300px; overflow-y: auto;">
+                        ${REJECTION_REASONS.map((reason, index) => `
+                            <div style="padding: 0.75rem; margin-bottom: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer; transition: background-color 0.2s;"
+                                 onmouseover="this.style.backgroundColor='var(--border-color)'"
+                                 onmouseout="this.style.backgroundColor='transparent'"
+                                 onclick="closeAndResolve(${index})">
+                                ${reason}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="text-align: right; margin-top: 1rem;">
+                         <button type="button" class="action-btn reject-btn" onclick="closeAndResolve(null)">Annuler</button>
+                    </div>
+                </div>
+            `;
+                document.body.appendChild(modal);
+                window.closeAndResolve = function (index) {
+                    document.body.removeChild(modal);
+                    delete window.closeAndResolve;
+                    resolve(index !== null && index >= 0 && index < REJECTION_REASONS.length ? REJECTION_REASONS[index] : null);
+                };
+            });
+        }
+
+                // === Rejeter un concept ===
+        async function rejectConcept(conceptId) {
+            if (processingConcepts.has(conceptId)) return;
+            try {
+                if (!await checkAdminAccess()) return;
+                processingConcepts.add(conceptId);
+                const rejectBtn = document.querySelector(`button[onclick="rejectConcept('${conceptId}')"]`);
+                if (rejectBtn) rejectBtn.disabled = true;
+
+                const rejectionReason = await showRejectionReasonsModal();
+                if (!rejectionReason) { // المستخدم ضغط على "Annuler" فالمودال ديال أسباب الرفض
+                    processingConcepts.delete(conceptId); // مهم باش مايبقاش الزر معطل
+                    if (rejectBtn) rejectBtn.disabled = false;
+                    return;
+                }
+
+                const pendingConcept = await databases.getDocument(
+                    termsDatabaseId, pendingConceptsCollectionId, conceptId
+                );
+                if (pendingConcept.status === 'rejected') {
+                    showToast('Ce concept a déjà été rejeté.', 'info'); return;
+                }
+                const nowISO = new Date().toISOString();
+                const originalUserId = pendingConcept.userId; // المستخدم اللي ضاف المفهوم
+                const termRejected = pendingConcept.term; // اسم المفهوم المرفوض
+
+                // تحديث حالة المفهوم إلى 'rejected' مع سبب الرفض
+                await databases.updateDocument(
+                    termsDatabaseId, pendingConceptsCollectionId, conceptId,
+                    { status: 'rejected', rejection_reason: rejectionReason } // حيدنا rejected_at
+                );
+
+                // إنشاء إشعار الرفض للمستخدم الأصلي
+                try {
+                    await databases.createDocument(
+                        termsDatabaseId, NOTIFICATIONS_COLLECTION_ID, 'unique()',
+                        {
+                            user_id: originalUserId,
+                            concept_id: conceptId, // هنا كنستعملو ID ديال المفهوم اللي كان ف pending
+                            type: 'rejected',
+                            title: `Votre concept a été rejeté : "${termRejected}"`,
+                            description: `Malheureusement, votre concept "${termRejected}" a été rejeté. Raison : ${rejectionReason}`,
+                            is_read: false,
+                            created_at: nowISO,
+                            // buttons: JSON.stringify([{ text: "Suggérer Autre", action: "add-concept" }])
+                        }
+                    );
+                } catch (notifError) { console.error(`Erreur création notification 'rejected' pour ${originalUserId}:`, notifError); }
+
+                showToast('Concept rejeté avec succès.', 'success');
+                loadStats();
+                loadPendingConcepts();
+
+            } catch (error) {
+                console.error('Erreur globale lors du rejet du concept:', error);
+                showToast('Une erreur est survenue lors du rejet.', 'error');
+            } finally {
+                processingConcepts.delete(conceptId);
+                const rejectBtn = document.querySelector(`button[onclick="rejectConcept('${conceptId}')"]`);
+                if (rejectBtn) rejectBtn.disabled = false;
+            }
+        }
+                
+        // === Initialisation au chargement de la page ===
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (await checkAdminAccess()) {
+                console.log('Chargement des données du tableau de bord...');
+                loadStats();
+                loadPendingConcepts();
+                loadUsers(); // Charger les utilisateurs après confirmation de l'accès admin
+            } else {
+                console.log('Accès non autorisé ou erreur, chargement des données annulé.');
+            }
+        });
+
+        // === Rendre les fonctions d'action accessibles globalement ===
+        window.approveConcept = approveConcept;
+        window.rejectConcept = rejectConcept;
+        // window.openEditModal et window.closeEditModal sont déjà globales
+
+    </script>
+</body>
+
+</html>

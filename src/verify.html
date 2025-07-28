@@ -1,0 +1,462 @@
+<!-- verify.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification - BioTerms</title>
+    <link rel="shortcut icon" type="x-icon" href="Logo.png">
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@16.0.2"></script>
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+    <style>
+        :root {
+            --primary-color: #000000;
+            --background-color: #f8f8f8;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --hover-color: #f5f5f5;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+        }
+        .container {
+            background: #fafafa;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            width: 90%;
+            max-width: 480px;
+            text-align: center;
+        }
+        .logo-verify {
+            width: 80px;
+            height: auto;
+            margin: 0 auto 1.5rem;
+            display: block;
+        }
+        h1 {
+            color: var(--primary-color);
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        p {
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .otp-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin: 1.5rem auto;
+        }
+        .otp-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .otp-slot {
+            position: relative; /* مهم لتحديد موضع العناصر الداخلية */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 3.8rem;
+            width: 3.2rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.75rem;
+            background-color: #ffffff;
+            transition: all 0.2s ease;
+        }
+        .otp-slot.filled {
+            border-color: var(--primary-color);
+        }
+        .otp-slot:focus-within,
+        .otp-slot.active {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* العنصر الجديد لعرض الرقم */
+        .otp-digit-display {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            pointer-events: none; /* حتى لا يتداخل مع النقر على حقل الإدخال */
+        }
+
+        .otp-separator {
+            margin: 0 0.25rem;
+            color: #666666;
+            font-weight: 500;
+            font-size: 1.2rem;
+        }
+        .otp-input {
+            position: absolute;
+            opacity: 0; /* اجعلها شفافة تمامًا */
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            cursor: text;
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 0;
+            border: none;
+            background: transparent;
+            caret-color: var(--primary-color); /* لون مؤشر الكتابة (caret) */
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 0.875rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1.5rem;
+        }
+        .button:hover {
+            background: #333333;
+            transform: translateY(-1px);
+        }
+        .button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .resend {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .resend a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        .resend a:hover {
+            text-decoration: underline;
+            color: #333333;
+        }
+        @media (max-width: 480px) {
+            .container { padding: 1.5rem; }
+            .otp-slot { height: 3.2rem; width: 2.7rem; }
+            .otp-digit-display, .otp-input { font-size: 1.2rem; }
+        }
+        .toast { /* ... نفس ستايل التوست من الكود السابق ... */
+            position: fixed; top: 20px; right: 20px; transform: translateX(120%) translateY(0);
+            background-color: white; padding: 16px 30px; border-radius: 8px;
+            display: flex; align-items: center; gap: 12px; opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 1000; min-width: 250px;
+        }
+        .toast.success { border-left: 4px solid #2ecc71; } .toast.error { border-left: 4px solid #e74c3c; }
+        .toast.warning { border-left: 4px solid #f39c12; } .toast.info { border-left: 4px solid #3498db; }
+        .toast i { font-size: 20px; }
+        .toast.success i { color: #2ecc71; } .toast.error i { color: #e74c3c; }
+        .toast.warning i { color: #f39c12; } .toast.info i { color: #3498db; }
+        .toast.show { opacity: 1; transform: translateX(0) translateY(0); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="Logo Light Mode.png" alt="BioTerms Logo" class="logo-verify">
+        <h1>Vérifiez votre compte</h1>
+        <p>Nous avons envoyé un code de vérification à 6 chiffres à votre adresse e-mail. Veuillez saisir le code ci-dessous.</p>
+        
+        <form id="otp-form">
+            <div id="otp-container" class="otp-container">
+                <!-- سيتم توليد الخانات هنا بواسطة JavaScript -->
+            </div>
+            <button type="submit" id="verify-btn" class="button">Vérifier le code</button>
+        </form>
+
+        <div class="resend">
+            <a href="#" id="resend-otp-link">Vous n'avez pas reçu le code ? Renvoyer</a>
+        </div>
+        
+        <div id="toast" class="toast">
+            <i class="fas fa-info-circle"></i>
+            <span id="toastMessage"></span>
+        </div>
+    </div>
+
+
+        
+
+    <script>
+        const { Client, Account } = Appwrite; // ID ليس ضرورياً هنا إلا إذا كنت ستستخدمه
+        const client = new Client();
+        
+        
+        client
+        .setEndpoint("https://fra.cloud.appwrite.io/v1")
+        .setProject("66bdd9ef0022a854dccc");
+        const account = new Account(client);
+
+        const otpContainer = document.getElementById('otp-container');
+        const verifyBtn = document.getElementById('verify-btn');
+        const resendLink = document.getElementById('resend-otp-link');
+        const otpForm = document.getElementById('otp-form');
+        const NUM_OTP_INPUTS = 6;
+        let inputs = []; // مصفوفة لتخزين حقول الإدخال
+
+        function generateOTPInputs() {
+            otpContainer.innerHTML = '';
+            inputs = [];
+
+            const group1 = document.createElement('div');
+            group1.className = 'otp-group';
+            const group2 = document.createElement('div');
+            group2.className = 'otp-group';
+
+            for (let i = 0; i < NUM_OTP_INPUTS; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'otp-slot';
+                slot.dataset.index = i;
+
+                // *** التغيير الرئيسي هنا ***
+                const digitDisplay = document.createElement('span');
+                digitDisplay.className = 'otp-digit-display'; 
+                // digitDisplay.textContent = ''; // اختياري: يمكن تركها فارغة أو وضع placeholder
+
+                const input = document.createElement('input');
+                input.type = 'text'; // استخدام text أفضل للتحكم في maxlength والسماح باللصق
+                input.maxLength = 1;
+                input.className = 'otp-input';
+                input.dataset.index = i;
+                input.setAttribute('aria-label', `OTP Digit ${i + 1}`);
+                input.setAttribute('autocomplete', 'one-time-code'); // مهم للملء التلقائي من الرسائل
+
+                slot.appendChild(digitDisplay); // إضافة عنصر العرض
+                slot.appendChild(input);        // إضافة حقل الإدخال
+                inputs.push(input);
+
+                if (i < 3) {
+                    group1.appendChild(slot);
+                } else {
+                    group2.appendChild(slot);
+                }
+            }
+            otpContainer.appendChild(group1);
+            const separator = document.createElement('div');
+            separator.className = 'otp-separator';
+            separator.textContent = '-';
+            otpContainer.appendChild(separator);
+            otpContainer.appendChild(group2);
+
+            setupOTPListeners();
+            if (inputs.length > 0) {
+                inputs[0].focus();
+            }
+        }
+        
+        function setupOTPListeners() {
+            inputs.forEach((input, index) => {
+                const slot = input.parentElement; // الـ div.otp-slot
+                const digitDisplay = slot.querySelector('.otp-digit-display');
+
+                input.addEventListener('input', (e) => {
+                    if (digitDisplay) {
+                        digitDisplay.textContent = e.target.value; // تحديث عنصر العرض
+                    }
+
+                    if (e.target.value) {
+                        slot.classList.add('filled');
+                        if (index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        }
+                    } else {
+                        slot.classList.remove('filled');
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !input.value && index > 0) {
+                        // عند الضغط على Backspace في خانة فارغة، انتقل للخلف
+                        inputs[index - 1].focus();
+                        // اختياري: مسح الخانة السابقة أيضاً عند الانتقال إليها بالـ Backspace
+                        // inputs[index - 1].value = '';
+                        // const prevSlot = inputs[index-1].parentElement;
+                        // const prevDisplay = prevSlot.querySelector('.otp-digit-display');
+                        // if(prevDisplay) prevDisplay.textContent = '';
+                        // prevSlot.classList.remove('filled');
+                    }
+                    // منع إدخال غير الأرقام إذا أردت (يمكن تحسين هذه الجزئية)
+                    if (e.key.length === 1 && !/^[0-9]$/.test(e.key) && 
+                        !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key) &&
+                        !(e.ctrlKey || e.metaKey)) { // للسماح بـ Ctrl+V, Ctrl+C, etc.
+                        e.preventDefault();
+                    }
+                });
+
+                input.addEventListener('focus', () => slot.classList.add('active'));
+                input.addEventListener('blur', () => slot.classList.remove('active'));
+
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pastedData = (e.clipboardData || window.clipboardData).getData('text').trim();
+                    if (/^\d+$/.test(pastedData) && pastedData.length <= NUM_OTP_INPUTS) {
+                        let currentPastedIndex = 0;
+                        for (let i = index; i < NUM_OTP_INPUTS && currentPastedIndex < pastedData.length; i++) {
+                            inputs[i].value = pastedData[currentPastedIndex];
+                            const currentSlot = inputs[i].parentElement;
+                            const display = currentSlot.querySelector('.otp-digit-display');
+                            if (display) display.textContent = pastedData[currentPastedIndex];
+                            currentSlot.classList.add('filled');
+                            currentPastedIndex++;
+                            if (i < inputs.length -1) inputs[i+1].focus(); // الانتقال للخانة التالية
+                            else inputs[i].focus(); // البقاء في اخر خانة
+                        }
+                         // محاولة التحقق إذا تم لصق الكود كاملاً
+                        if (getOTPValue().length === NUM_OTP_INPUTS) {
+                            verifyBtn.click();
+                        }
+
+                    } else if (pastedData.length > 0) { // إذا كان اللصق غير صالح ولكن ليس فارغًا
+                         showToast('Le code OTP collé est invalide. Veuillez coller uniquement des chiffres.', 'warning');
+                    }
+                });
+            });
+        }
+
+        function getOTPValue() {
+            return inputs.map(input => input.value).join('');
+        }
+
+        otpForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'Vérification...';
+
+            const otp = getOTPValue();
+            const userId = localStorage.getItem('userIdForVerification');
+
+            if (!userId) {
+                showToast('ID utilisateur non trouvé. Veuillez réessayer de vous inscrire.', 'error');
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Vérifier le code';
+                return;
+            }
+
+            if (otp.length !== NUM_OTP_INPUTS) {
+                showToast(`Veuillez entrer un code à ${NUM_OTP_INPUTS} chiffres.`, 'warning');
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Vérifier le code';
+                return;
+            }
+            
+            try {
+                const session = await account.createSession(userId, otp);
+                console.log('Session created with OTP:', session);
+                showToast('Vérification réussie ! Redirection...', 'success');
+                localStorage.removeItem('userIdForVerification');
+                localStorage.removeItem('emailForVerification');
+                setTimeout(() => { window.location.href = 'app.html'; }, 2000);
+            } catch (error) {
+                console.error('OTP Verification failed:', error);
+                showToast('Code invalide ou expiré. Veuillez réessayer.', 'error');
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Vérifier le code';
+                inputs.forEach(input => {
+                    input.value = '';
+                    const display = input.parentElement.querySelector('.otp-digit-display');
+                    if (display) display.textContent = '';
+                    input.parentElement.classList.remove('filled');
+                }); 
+                if(inputs.length > 0) inputs[0].focus();
+            }
+        });
+
+        resendLink.addEventListener('click', async (event) => {
+            event.preventDefault();
+            // يمكنك إضافة مؤقت هنا لمنع إعادة الإرسال المتكرر بسرعة
+            const userId = localStorage.getItem('userIdForVerification');
+            const email = localStorage.getItem('emailForVerification');
+
+            if (!userId || !email) {
+                showToast('Impossible de renvoyer le code. Données manquantes.', 'error');
+                return;
+            }
+            try {
+                await account.createEmailToken(userId, email);
+                showToast('Nouveau code envoyé à votre email.', 'success');
+            } catch (error) {
+                console.error('Failed to resend OTP:', error);
+                showToast('Échec du renvoi du code: ' + error.message, 'error');
+            }
+        });
+
+        window.onload = async () => {
+            generateOTPInputs(); 
+
+            try {
+                const user = await account.get();
+                if (user && user.emailVerification) {
+                    window.location.href = 'app.html';
+                    return; 
+                }
+            } catch (error) {
+                console.log("L'utilisateur n'est pas connecté (page verify).");
+            }
+
+            const emailForDisplay = localStorage.getItem('emailForVerification');
+            if (emailForDisplay) {
+                const p = document.querySelector('.container p');
+                if (p) {
+                    const parts = emailForDisplay.split('@');
+                    const name = parts[0];
+                    const domain = parts[1];
+                    const maskedName = name.length > 3 ? name.substring(0,2) + '*'.repeat(Math.max(0,name.length - 3)) + name.slice(-1) : (name.length > 1 ? name.substring(0,1) + "*" : name);
+                    p.textContent = `Nous avons envoyé un code de vérification à 6 chiffres à ${maskedName}@${domain}. Veuillez saisir le code ci-dessous.`;
+                }
+            } else {
+                showToast("Information de l'utilisateur non trouvée. Veuillez recommencer.", "warning");
+            }
+        };
+        
+        function showToast(message, type = 'info') { /* ... نفس دالة التوست ... */
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const icon = toast.querySelector('i');
+            toast.className = 'toast'; icon.className = 'fas'; 
+            const toastTypes = {
+                'success': { class: 'success', icon: 'fa-check-circle' }, 'error': { class: 'error', icon: 'fa-exclamation-circle' },
+                'warning': { class: 'warning', icon: 'fa-exclamation-triangle' }, 'info': { class: 'info', icon: 'fa-info-circle' }
+            };
+            const currentType = toastTypes[type] || toastTypes['info'];
+            toast.classList.add(currentType.class); icon.classList.add(currentType.icon);
+            toastMessage.textContent = message;
+            toast.classList.remove('show'); void toast.offsetWidth; toast.classList.add('show');
+            if (toast.hideTimeout) clearTimeout(toast.hideTimeout);
+            toast.hideTimeout = setTimeout(() => { toast.classList.remove('show'); }, 5000);
+            toast.onclick = () => { clearTimeout(toast.hideTimeout); toast.classList.remove('show'); };
+        }
+    </script>
+</body>
+</html>
