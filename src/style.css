@@ -2,7 +2,7 @@
 /*          1. ROOT & BODY SETUP               */
 /* ============================================= */
 :root {
-    /* Colors */
+    /* Colors (المتغيرات الجديدة التي طلبتها) */
     --background-light: #ffffff;
     --text-light: #333333;
     --card-bg-light: #ffffff;
@@ -15,23 +15,24 @@
     --mobile-search-dark: #333333;
     --icon-light: #333333;
     --icon-dark: #ffffff;
-    --placeholder-light: #888888;
+    --placeholder-light: #888888;  
     --placeholder-dark: #bbbbbb;
-    --border-color-light: #e0e0e0;
+    --border-color-light: #e0e0e0;  
     --border-color-dark: #555555;
     --active-bg-light: #333333;
     --active-text-light: #ffffff;
     --active-bg-dark: #ffffff;
     --active-text-dark: #333333;
-    --hover-bg-light: #f5f5f5;
+    --hover-bg-light: #f5f5f5;  
     --hover-bg-dark: #444444;
-    --shadow-color: rgba(0, 0, 0, 0.1);
+    --shadow-color: rgba(0, 0, 0, 0.08); /* ظل أخف وأجمل */
 
     /* Fonts & Spacing */
     --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --border-radius: 8px;
+    --border-radius: 12px; /* زيادة انحناء الزوايا لتطابق الصورة */
     --spacing-unit: 1rem; /* 16px */
 }
+
 
 *,
 *::before,
@@ -68,11 +69,11 @@ body.dark-mode {
     --hover-bg-light: var(--hover-bg-dark);
 }
 
-#app {
+  #app {
     height: 100%;
     display: flex;
     flex-direction: column;
-}
+} 
 
 button {
     background: none;
@@ -169,11 +170,14 @@ a {
     margin-bottom: 0.75rem;
     cursor: pointer;
     transition: background-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 5px var(--shadow-color);
+    background-color: var(--card-bg-light);
 }
 
 .term-list li:hover {
     background-color: var(--hover-bg-light);
-    box-shadow: 0 4px 12px var(--shadow-color);
+    box-shadow: 0 5px 15px var(--shadow-color);
+    transform: translateY(-2px);
 }
 
 .term-text {
@@ -205,10 +209,23 @@ a {
 }
 
 /* Header Icons (shared parts) */
+
 .header-icons, .mobile-header {
     display: flex;
     align-items: center;
     gap: var(--spacing-unit);
+}
+
+.desktop-layout header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--header-light);
 }
 
 .header-icons i, .mobile-header i, .mobile-tab-bar i {
@@ -239,24 +256,81 @@ a {
 
 /* Toast Notification */
 .toast {
+    /* Positioning */
     position: fixed;
-    bottom: 80px; /* Above mobile tab bar */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 1rem 1.5rem;
-    border-radius: var(--border-radius);
-    z-index: 1001;
+    top: 20px;
+    right: 20px;
+    z-index: 2000; /* نضمن أنه فوق كل العناصر */
+
+    /* Layout & Sizing */
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    gap: 12px;
+    min-width: 300px;
+    max-width: 420px;
+
+    /* Appearance (مطابق للصورة) */
+    background-color: var(--card-bg-light, #ffffff);
+    color: var(--text-light, #333333);
+    padding: 10px 20px 10px 10px;
+    border-radius: 50px; /* للحصول على شكل بيضاوي */
+    box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.15));
+    border: 1px solid var(--border-color-light, #e0e0e0);
+
+    /* Animation */
+    transform: translateX(110%); /* يبدأ خارج الشاشة */
+    transition: transform 0.4s ease-in-out;
+    opacity: 0;
+}
+
+
+.toast.show {
+    transform: translateX(0); /* يدخل إلى الشاشة */
+    opacity: 1;
+}
+
+.toast-icon-container {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    /* لون الإطار سيتغير حسب نوع الإشعار */
+    border: 3px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; /* لمنعه من التقلص */
 }
 
 .toast-icon {
-    font-size: 1.2rem;
+    font-size: 1rem;
+    
 }
+
+#toastMessage {
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--text-light, #333333);
+}
+
+/* تحديد ألوان لأنواع الإشعارات المختلفة */
+.toast.success .toast-icon-container,
+.toast.success .toast-icon {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.toast.error .toast-icon-container,
+.toast.error .toast-icon {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.toast.info .toast-icon-container,
+.toast.info .toast-icon {
+    border-color: #007bff;
+    color: #007bff;
+}
+
 
 /* ============================================= */
 /*          3. MOBILE LAYOUT (< 768px)         */
@@ -321,61 +395,96 @@ a {
 }
 
 /* Mobile Modal for Definition */
+/* ============================================= */
+/*          MOBILE MODAL (FULL SCREEN)           */
+/* ============================================= */
+
+/* The main modal container, now acts as a full-page view */
 .modal {
-    display: none; /* Hidden by default, shown by JS */
+    display: none; /* Hidden by default */
     position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(4px);
+    /* The modal itself is now the background, no more semi-transparent overlay */
+    background-color: var(--card-bg-light); 
+    overflow: hidden; /* Prevent any potential overflow issues */
+    
+    /* We'll animate the modal itself sliding in */
+    animation: slideInFromBottom 0.35s ease-out;
 }
 
+/* The content container now structures the full page */
 .modal-content {
-    background-color: var(--card-bg-light);
-    margin: auto;
-    padding: 1.5rem;
-    border-radius: var(--border-radius);
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 8px 30px var(--shadow-color);
-    animation: fadeIn 0.3s ease-out;
+    width: 100%;
+    height: 100%;
+    
+    /* Make it a flex container to control the layout */
+    display: flex;
+    flex-direction: column;
+    
+    /* Remove all card-like styles */
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    
+    /* Add padding, considering phone notches and home bars (safe areas) */
+    padding: env(safe-area-inset-top, 20px) 1.5rem 0; /* No bottom padding here */
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+/* Animation for the modal appearing */
+@keyframes slideInFromBottom {
+    from {
+        transform: translateY(100%);
+        opacity: 0.8;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
+/* The term/title at the top */
 #modalTerm {
     font-size: 1.75rem;
     font-weight: 700;
     margin-bottom: 1rem;
     color: var(--text-light);
     text-align: center;
+    flex-shrink: 0; /* Don't let the title shrink */
 }
 
+/* The definition text area - THIS IS THE KEY CHANGE */
 #modalDefinition {
+    /* This makes the definition area take up all available space */
+    flex-grow: 1; 
+    
+    /* Allow scrolling ONLY within this area if the text is long */
+    overflow-y: auto; 
+    
     font-size: 1rem;
     line-height: 1.6;
-    margin-bottom: 1.5rem;
-    max-height: 50vh;
-    overflow-y: auto;
+    margin-bottom: 1rem;
     color: var(--text-light);
 }
 
+/* The container for the control buttons */
 .definition-buttons {
     display: flex;
-    justify-content: center;
+    justify-content: space-around; /* Distribute buttons evenly */
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
+    
+    /* Make the buttons stick to the bottom */
+    flex-shrink: 0; 
+    
+    /* Add padding and respect the home bar area on iPhones */
+    padding: 1rem 0 calc(1rem + env(safe-area-inset-bottom, 10px));
+    
     border-top: 1px solid var(--border-color-light);
-    padding-top: 1rem;
+    background-color: var(--card-bg-light); /* Ensure it has a background */
 }
 
 .definition-btn {
@@ -383,156 +492,45 @@ a {
     font-size: 1.5rem;
     color: var(--icon-light);
     opacity: 0.8;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, transform 0.2s;
 }
 .definition-btn:hover {
     opacity: 1;
+    transform: scale(1.1);
 }
 .definition-btn sup {
     font-size: 0.6em;
 }
 
-/* ============================================= */
-/*         4. DESKTOP LAYOUT (> 768px)         */
-/* ============================================= */
 @media (min-width: 769px) {
+
+    /* --- إعدادات أساسية لنسخة سطح المكتب --- */
     .mobile-layout {
         display: none;
     }
-    .desktop-layout {
+
+    body {
+        /* خلفية رمادية فاتحة لإبراز البطاقات */
+        background-color: #ffffff;
+        padding: 2rem; /* هوامش حول التطبيق بالكامل */
+    }
+    body.dark-mode {
+        background-color: #202124;
+    }
+
+    #app {
+        /* حاوية التطبيق الرئيسية */
+        width: 100%;
+        max-width: 1200px;
+        height: calc(100vh - 4rem); /* يأخذ ارتفاع الشاشة مع طرح الهوامش */
+        margin: 0 auto; /* توسيط الحاوية أفقياً */
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        gap: 1.5rem; /* مسافة بين الهيدر والمحتوى الرئيسي */
     }
 
-    /* Desktop Header */
-    header {
-        display: flex;
-        align-items: center;
-        padding: 0.75rem var(--spacing-unit);
-        border-bottom: 1px solid var(--border-color-light);
-        flex-shrink: 0; /* Prevents header from shrinking */
-    }
-    header .site-title {
-        margin-right: auto;
-    }
-
-    /* Main Content Area */
-    .main-content {
-        display: flex;
-        flex-grow: 1; /* Takes up remaining vertical space */
-        overflow: hidden; /* Prevents whole page from scrolling */
-    }
-
-    /* Sidebar (Left Column) */
-    .sidebar {
-        flex: 0 0 380px; /* Fixed width */
-        padding: var(--spacing-unit);
-        border-right: 1px solid var(--border-color-light);
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
-    }
-    .sidebar .container {
-        flex-grow: 1;
-        overflow-y: auto; /* Make term list scrollable */
-        margin: 0 -1rem; /* Adjust padding for scrollbar */
-        padding: 0 1rem;
-    }
-
-    /* Pagination */
-    .pagination-container {
-        padding: var(--spacing-unit) 0;
-        flex-shrink: 0;
-    }
-    .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .pagination button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        border-radius: var(--border-radius);
-        border: 1px solid var(--border-color-light);
-        font-weight: 500;
-        transition: background-color 0.2s, color 0.2s;
-    }
-    .pagination button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    .pagination button:not(:disabled):hover {
-        background-color: var(--hover-bg-light);
-    }
-    .pagination button.active {
-        background-color: var(--active-bg-light);
-        color: var(--active-text-light);
-        border-color: var(--active-bg-light);
-    }
-
-    /* Content Area (Right Column) */
-    .content {
-        flex-grow: 1;
-        padding: 2rem;
-        overflow-y: auto;
-    }
-    .content:empty::before {
-        content: 'Sélectionnez un terme dans la liste pour voir sa définition.';
-        font-size: 1.2rem;
-        color: var(--placeholder-light);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        text-align: center;
-    }
-
-    .term-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        border-bottom: 2px solid var(--border-color-light);
-        padding-bottom: 1rem;
-    }
-
-    .definition-text {
-        font-size: 1.1rem;
-        line-height: 1.7;
-        margin-bottom: 2rem;
-    }
-
-    .content .definition-buttons {
-        justify-content: flex-start;
-        border: none;
-        padding: 0;
-    }
-    .content .definition-btn {
-        padding: 0.5rem;
-        border-radius: var(--border-radius);
-        transition: background-color 0.2s;
-    }
-    .content .definition-btn:hover {
-        background-color: var(--hover-bg-light);
-    }
-}
-
-
-/* تعديلات التحديث  */
-
-/* 
-   .desktop-layout .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-}
-
-.desktop-layout header {
+    /* --- الهيدر (الشريط العلوي) --- */
+    .desktop-layout header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -544,120 +542,95 @@ a {
     background-color: var(--header-light);
 }
 
-.desktop-layout .main-content {
-    display: flex;
-    width: 100%;
-    max-width: 1200px;
+    /* --- المحتوى الرئيسي (الذي يحتوي الشريط الجانبي والمحتوى) --- */
+    .main-content {
+        display: flex;
+        gap: 1.5rem; /* مسافة بين الشريط الجانبي والمحتوى */
+        flex-grow: 1;
+        overflow: hidden;
+    }
+
+    /* --- الشريط الجانبي (القائمة اليسرى) --- */
+    .sidebar {
+        flex: 0 0 340px; /* عرض ثابت */
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        /* ستايل البطاقة */
+        background-color: var(--card-bg-light);
+        border-radius: var(--border-radius);
+        box-shadow: 0 8px 16px var(--shadow-color);
+        border: none;
+    }
+    
+    /* --- قسم المحتوى (الجهة اليمنى) --- */
+    .content {
+        flex-grow: 1;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        /* ستايل البطاقة */
+        background-color: var(--card-bg-light);
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px var(--shadow-color);
+    }
+    .content:empty::before {
+        content: 'Sélectionnez un terme pour voir sa définition.';
+        font-size: 1.2rem;
+        color: var(--placeholder-light);
+        margin: auto;
+        text-align: center;
+    }
+
+    /* --- تنسيق محتوى التعريف (مطابق للصورة) --- */
+    .term-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        text-align: center; /* توسيط العنوان */
+        border-bottom: none; /* لا يوجد خط تحت العنوان */
+    }
+
+    .definition-text {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        /* أهم تعديل: إضافة المربع حول النص */
+        border: 1px solid var(--border-color-light);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+    }
+
+    .content .definition-buttons {
+        justify-content: center; /* توسيط الأزرار */
+        border: none; /* إزالة أي خطوط */
+        padding: 0;
+        margin-top: auto; /* دفع الأزرار إلى الأسفل */
+    }
+    
+    /* --- تنسيقات أخرى (Pagination) --- */
+    /* (هذا الكود صحيح ويجب الإبقاء عليه) */
+    .pagination-container {
+        padding-top: 1.5rem;
+        flex-shrink: 0;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .pagination button {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid var(--border-color-light);
+    }
+    .pagination button.active {
+        background-color: var(--active-bg-light);
+        color: var(--active-text-light);
+        border-color: var(--active-bg-light);
+    }
 }
-
-
-.desktop-layout .sidebar .search-bar {
-    width: 100%;
-    padding: 10px 40px 10px 15px;
-    border: 1px solid var(--border-color-light);
-    border-radius: 25px;
-    font-size: 16px;
-    background-color: var(--background-light);
-    color: var(--text-light);
-}
-
-
-
-.desktop-layout .content {
-    flex: 1;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
-    background-color: var(--background-light);
-}
-
-body.dark-mode .desktop-layout .content {
-    background-color: var(--background-dark);
-}
-
-.desktop-layout .content .term-title {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-    font-weight: bold;
-}
-
-.desktop-layout .content .definition-container {
-    border: 1px solid var(--border-color-light);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-body.dark-mode .desktop-layout .content .definition-container {
-    border-color: var(--border-color-dark);
-}
-
-.desktop-layout .content .definition-text {
-    line-height: 1.7;
-    font-size: 17px;
-    transition: font-size 0.2s ease-in-out;
-}
-
-.desktop-layout .content .definition-buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 25px;
-    width: 100%;
-    padding-top: 15px;
-}
-
-.desktop-layout .content .definition-btn {
-    cursor: pointer;
-    width: 55px;
-    height: 55px;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    border: none;
-    background-color: transparent;
-    transition: transform 0.2s ease, background-color 0.2s ease;
-    color: var(--text-light);
-}
-
-.desktop-layout .content .definition-btn:hover {
-    transform: scale(1.1);
-    background-color: rgba(0,0,0,0.05);
-}
-
-body.dark-mode .desktop-layout .content .definition-btn {
-    color: var(--text-dark);
-}
-
-body.dark-mode .desktop-layout .content .definition-btn:hover {
-    background-color: rgba(255,255,255,0.1);
-}
-
-
-.desktop-layout .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.desktop-layout .pagination button {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    border-radius: 50%;
-    text-align: center;
-    text-decoration: none;
-    margin: 0 5px;
-    cursor: pointer;
-    font-size: 14px;
-    border: 1px solid var(--border-color-light);
-    color: var(--text-light);
-    background-color: var(--background-light);
-}
-
-*/

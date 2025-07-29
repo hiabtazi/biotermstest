@@ -461,76 +461,120 @@ function isConceptNew(approvedAt) {
     return (Date.now() - approvedDate.getTime()) < twentyFourHours;
 }
 
+// Inside createDefinitionListItem in main.js
+// استبدل الدالة القديمة بهذه النسخة الجديدة والمبسطة
 function createDefinitionListItem(def) {
+    // 1. إنشاء العنصر الأساسي للقائمة (<li>)
     const li = document.createElement('li');
-    li.dataset.conceptId = def.$id;
+    li.dataset.conceptId = def.$id; // تخزين ID المصطلح كـ data-attribute للوصول إليه لاحقًا
+
+    // 2. التحقق مما إذا كان المصطلح مفتوحًا (unlocked) للمستخدم الحالي
     const isUnlocked = isTermUnlocked(def.$id);
 
+    // 3. إنشاء عنصر <span> لعرض نص المصطلح
     const termText = document.createElement('span');
     termText.className = 'term-text';
     termText.textContent = def.term;
 
+    // 4. التحقق مما إذا كان المصطلح جديدًا (أُضيف خلال آخر 24 ساعة)
     if (isConceptNew(def.approvedAt)) {
         const newIcon = document.createElement('i');
-        newIcon.className = 'fa-light fa-star new-icon';
-        newIcon.title = "Nouveau terme";
-        termText.prepend(newIcon);
+        newIcon.className = 'fa-light fa-star new-icon'; // أيقونة نجمة للمصطلحات الجديدة
+        newIcon.title = "Nouveau terme"; // نص يظهر عند التحويم
+        termText.prepend(newIcon); // إضافة الأيقونة قبل نص المصطلح
     }
 
+    // 5. إنشاء حاوية <div> لتجميع الأيقونات على اليمين
     const iconsContainer = document.createElement('div');
     iconsContainer.className = 'icons-container';
 
+    // 6. إضافة منطق النقر على عنصر القائمة بأكمله
     li.addEventListener('click', async (event) => {
-        if (event.target.tagName === 'I') return;
+        // نتجاهل النقرات على الأيقونات نفسها لأن لها أحداث خاصة بها
+        if (event.target.tagName === 'I') {
+            return;
+        }
 
         if (isUnlocked) {
-            if (window.innerWidth <= 768) showConceptModal(def.term, def.definition);
-            else displayDefinitionInContent(def.term, def.definition);
+            // إذا كان المصطلح مفتوحًا، اعرض التعريف مباشرة
+            if (window.innerWidth <= 768) {
+                showConceptModal(def.term, def.definition);
+            } else {
+                displayDefinitionInContent(def.term, def.definition);
+            }
         } else {
-            // فقط قم بمحاولة فتح المصطلح. لا تقم بتحديث الواجهة هنا.
-            // التحديث في الوقت الحقيقي سيتكفل بالباقي.
+            // إذا كان المصطلح مقفلاً، حاول فتحه
             try {
                 const user = await account.get();
                 const unlockedSuccessfully = await unlockTerm(user.$id, def.$id);
-                 if (unlockedSuccessfully) {
-                    if (window.innerWidth <= 768) showConceptModal(def.term, def.definition);
-                    else displayDefinitionInContent(def.term, def.definition);
+                if (unlockedSuccessfully) {
+                    // إذا تم الفتح بنجاح، أعد بناء هذا العنصر ليعكس الحالة الجديدة
+                    // هذا أسهل من تبديل الأيقونات والأحداث يدويًا
+                    const newLi = createDefinitionListItem(def);
+                    li.parentNode.replaceChild(newLi, li);
+                    
+                    // ثم اعرض التعريف
+                    if (window.innerWidth <= 768) {
+                        showConceptModal(def.term, def.definition);
+                    } else {
+                        displayDefinitionInContent(def.term, def.definition);
+                    }
                 }
             } catch (error) {
-                console.error('Error unlocking term on click:', error);
+                console.error('Error unlocking term:', error);
                 showToast("حدث خطأ أثناء محاولة فتح المصطلح", "error");
             }
         }
     });
 
+    // 7. تحديد الأيقونة التي يجب عرضها (قفل أو مفضلة)
     if (isUnlocked) {
+        // --- حالة المصطلح المفتوح: نعرض أيقونة المفضلة (Bookmark) ---
         const bookmarkIcon = document.createElement('i');
-        bookmarkIcon.className = favorites[def.term] ? 'fa-light fa-bookmark-slash' : 'fa-light fa-bookmark';
+        // تحديد شكل الأيقونة بناءً على ما إذا كان المصطلح في المفضلة أم لا
+        bookmarkIcon.className = favorites[def.term] 
+            ? 'fa-light fa-bookmark-slash'  // في المفضلة (أيقونة الإزالة)
+            : 'fa-light fa-bookmark';      // ليس في المفضلة (أيقونة الإضافة)
         bookmarkIcon.classList.add('bookmark-icon');
         bookmarkIcon.title = "Ajouter/Retirer des favoris";
-        bookmarkIcon.addEventListener('click', (event) => {
-            event.stopPropagation();
-            toggleFavorite(def.term, def.definition); // لا حاجة لـ await هنا
+
+        // إضافة حدث النقر على أيقونة المفضلة
+        bookmarkIcon.addEventListener('click', async (event) => {
+            event.stopPropagation(); // منع تفعيل حدث النقر على الـ <li>
+            await toggleFavorite(def.term, def.definition);
+            // تحديث شكل الأيقونة فورًا بعد التغيير
+            bookmarkIcon.className = favorites[def.term] 
+                ? 'fa-light fa-bookmark-slash' 
+                : 'fa-light fa-bookmark';
+            bookmarkIcon.classList.add('bookmark-icon');
         });
+
         iconsContainer.appendChild(bookmarkIcon);
+
     } else {
+        // --- حالة المصطلح المقفول: نعرض أيقونة القفل ---
         const lockIcon = document.createElement('i');
         lockIcon.className = 'fa-light fa-lock-keyhole';
         lockIcon.classList.add('lock-icon');
         lockIcon.title = `Déverrouiller ce terme (coûte 1 clé)`;
+
+        // إضافة حدث النقر على أيقونة القفل
         lockIcon.addEventListener('click', (event) => {
-            event.stopPropagation();
+            event.stopPropagation(); // منع تفعيل حدث النقر على الـ <li>
+            // تفعيل نفس المنطق الذي يحدث عند النقر على العنصر المقفول
             li.click();
         });
+
         iconsContainer.appendChild(lockIcon);
     }
 
+    // 8. تجميع كل الأجزاء معًا: إضافة النص وحاوية الأيقونات إلى عنصر <li>
     li.appendChild(termText);
     li.appendChild(iconsContainer);
 
+    // 9. إرجاع عنصر <li> المكتمل
     return li;
 }
-
 
 
 function displayMobileDefinitions(definitionsToDisplay) {
@@ -1038,64 +1082,51 @@ function handleLayoutChange() {
 
 
 
-// main.js
-
-// ... (كل الكود الذي يسبق الدالة يبقى كما هو)
-
 const subscribeToRealtime = () => {
-    // 1. الاشتراك في تغييرات المصطلحات المفتوحة (عند استخدام مفتاح)
-    client.subscribe(`databases.${termsDatabaseId}.collections.${userConceptsCollectionId}.documents`, async (response) => {
-        // نهتم فقط بأحداث إنشاء أو حذف وثيقة (فتح مصطلح أو إزالته نظرياً)
+    client.subscribe(`databases.${termsDatabaseId}.collections.${userConceptsCollectionId}.documents`, (response) => {
         if (response.events.includes('databases.*.collections.*.documents.*.create') ||
+            response.events.includes('databases.*.collections.*.documents.*.update') ||
             response.events.includes('databases.*.collections.*.documents.*.delete')) {
-            
-            console.log('Realtime: Unlocked concepts changed. Reloading...');
-            try {
-                const user = await account.get();
-                // الخطوة 1: أعد تحميل قائمة المصطلحات المفتوحة
-                await loadUserTerms(user.$id); 
-                // الخطوة 2: أعد رسم الواجهة بالكامل بعد تحديث الحالة
-                displayCurrentDefinitions();
-                console.log('UI updated for unlocked concepts.');
-            } catch (error) {
-                // تجاهل الأخطاء إذا كان المستخدم قد سجل الخروج
-                if (error.code !== 401) {
-                    console.error('Error reloading user terms after realtime event:', error);
-                }
-            }
+            // أعد تحميل حالة المصطلحات المفتوحة وأعد العرض
+            account.get().then(user => { // تأكد من أن المستخدم لا يزال مسجلاً
+                loadUserTerms(user.$id).then(() => {
+                    displayCurrentDefinitions();
+                });
+            }).catch(() => { /* المستخدم غير مسجل */ });
         }
     });
 
-    // 2. الاشتراك في تغييرات المفضلة (Bookmarks)
-    client.subscribe(`databases.${bookmarksDatabaseId}.collections.${bookmarksCollectionId}.documents`, async (response) => {
-        // نهتم فقط بأحداث إنشاء أو حذف وثيقة (إضافة/إزالة من المفضلة)
-        if (response.events.includes('databases.*.collections.*.documents.*.create') ||
-            response.events.includes('databases.*.collections.*.documents.*.delete')) {
+   client.subscribe(`databases.${bookmarksDatabaseId}.collections.${bookmarksCollectionId}.documents`, (response) => {
+    const eventType = response.events[0].split('.')[4]; // 'create' or 'delete'
+    const payload = response.payload; // يحتوي على بيانات الوثيقة التي تم إنشاؤها/حذفها
 
-            console.log('Realtime: Bookmarks changed. Reloading...');
-            try {
-                 // الخطوة 1: أعد تحميل قائمة المفضلة بالكامل
-                await loadFavorites();
-                // الخطوة 2: أعد رسم الواجهة بالكامل بعد تحديث الحالة
-                displayCurrentDefinitions();
-                console.log('UI updated for bookmarks.');
-            } catch (error) {
-                 if (error.code !== 401) {
-                    console.error('Error reloading bookmarks after realtime event:', error);
-                }
-            }
-        }
-    });
+/*     console.log(`app.html (main.js): Realtime event for bookmarks collection - Type: ${eventType}, Term: ${payload.term || 'N/A'}`);
+ */
+    // نهتم فقط بأحداث الإنشاء والحذف
+    if (eventType === 'create' || eventType === 'delete') {
+        // 1. أعد تحميل قائمة المفضلة بالكامل من قاعدة البيانات
+        //    loadFavorites() يجب أن تحدث الكائن العام 'favorites'
+        loadFavorites().then(() => {
+            // 2. أعد عرض قائمة المصطلحات الحالية
+            //    displayCurrentDefinitions() ستستخدم الكائن 'favorites' المحدث
+            //    لإنشاء عناصر القائمة وتعيين الأيقونات الصحيحة
+            displayCurrentDefinitions();
+            console.log('app.html (main.js): Bookmarks reloaded and UI updated after realtime event.');
+        }).catch(error => {
+            console.error('app.html (main.js): Error reloading favorites after realtime event:', error);
+        });
+    }
+});
 
-    // 3. الاشتراك في الإشعارات الجديدة
     client.subscribe(`databases.${DATABASE_ID}.collections.${NOTIFICATIONS_COLLECTION_ID}.documents`, () => {
         debounceCheckUnreadNotifications();
     });
 
-    // 4. الاشتراك في تغييرات جلسة المستخدم (تسجيل الخروج من تبويب آخر)
+    // للاستماع لتغييرات جلسة المستخدم (تسجيل الخروج من تبويب آخر)
     client.subscribe('account', (response) => {
         if (response.events.includes('users.*.sessions.*.delete')) {
-            account.get().catch(() => {
+            // إذا تم حذف الجلسة الحالية
+            account.get().catch(() => { // إذا لم يعد بالإمكان الحصول على المستخدم
                 showToast('تم تسجيل خروجك.', 'info');
                 setTimeout(() => window.location.href = 'login.html', 2000);
             });
@@ -1103,8 +1134,6 @@ const subscribeToRealtime = () => {
     });
 };
 
-
- 
 document.addEventListener('DOMContentLoaded', async () => {
     // استدعاء دالة واحدة فقط مسؤولة عن كلشي
     await initializeUserSession(); 

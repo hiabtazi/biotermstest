@@ -169,11 +169,14 @@ a {
     margin-bottom: 0.75rem;
     cursor: pointer;
     transition: background-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 5px var(--shadow-color);
+    background-color: var(--card-bg-light);
 }
 
 .term-list li:hover {
     background-color: var(--hover-bg-light);
-    box-shadow: 0 4px 12px var(--shadow-color);
+    box-shadow: 0 5px 15px var(--shadow-color);
+    transform: translateY(-2px);
 }
 
 .term-text {
@@ -205,6 +208,7 @@ a {
 }
 
 /* Header Icons (shared parts) */
+
 .header-icons, .mobile-header {
     display: flex;
     align-items: center;
@@ -395,121 +399,119 @@ a {
 /* ============================================= */
 /*         4. DESKTOP LAYOUT (> 768px)         */
 /* ============================================= */
+/* ============================================= */
+/*         4. DESKTOP LAYOUT (> 768px)         */
+/* ============================================= */
 @media (min-width: 769px) {
+    
+    /* --- إعدادات أساسية لنسخة سطح المكتب --- */
     .mobile-layout {
         display: none;
     }
-    .desktop-layout {
+
+    body {
+        /* توسيط التصميم بالكامل في الصفحة */
         display: flex;
-        flex-direction: column;
-        height: 100vh;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        min-height: 100vh;
+        background-color: #f0f2f5; /* خلفية رمادية فاتحة لإبراز التصميم */
     }
 
-    /* Desktop Header */
+    body.dark-mode {
+        background-color: #202124; /* خلفية رمادية داكنة للوضع الليلي */
+    }
+    
+    #app {
+        /* تحديد أبعاد الحاوية الرئيسية للتطبيق */
+        width: 100%;
+        max-width: 1200px;
+        height: 90vh;
+        max-height: 850px; /* حد أقصى للارتفاع على الشاشات الطويلة جداً */
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem; /* مسافة بين الهيدر والمحتوى الرئيسي */
+    }
+
+    /* --- الهيدر (الشريط العلوي) --- */
     header {
         display: flex;
         align-items: center;
-        padding: 0.75rem var(--spacing-unit);
-        border-bottom: 1px solid var(--border-color-light);
-        flex-shrink: 0; /* Prevents header from shrinking */
+        padding: 1rem 1.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px var(--shadow-color);
+        background-color: var(--card-bg-light); /* استخدام متغير البطاقات للخلفية */
+        flex-shrink: 0;
+        border-bottom: none; /* إزالة الخط السفلي القديم */
     }
     header .site-title {
         margin-right: auto;
+        font-size: 1.5rem;
+        font-weight: 600;
     }
 
-    /* Main Content Area */
+    /* --- المحتوى الرئيسي (الشريط الجانبي + المحتوى) --- */
     .main-content {
         display: flex;
-        flex-grow: 1; /* Takes up remaining vertical space */
-        overflow: hidden; /* Prevents whole page from scrolling */
+        gap: 1.5rem; /* مسافة بين الشريط الجانبي والمحتوى */
+        flex-grow: 1;
+        overflow: hidden; /* مهم لمنع المحتوى من الخروج عن الحدود */
     }
 
-    /* Sidebar (Left Column) */
+    /* --- الشريط الجانبي (القائمة اليسرى) --- */
     .sidebar {
-        flex: 0 0 380px; /* Fixed width */
-        padding: var(--spacing-unit);
-        border-right: 1px solid var(--border-color-light);
+        flex: 0 0 340px; /* عرض ثابت للشريط الجانبي */
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px var(--shadow-color);
+        background-color: var(--card-bg-light);
         display: flex;
         flex-direction: column;
-        overflow-y: auto;
-    }
-    .sidebar .container {
-        flex-grow: 1;
-        overflow-y: auto; /* Make term list scrollable */
-        margin: 0 -1rem; /* Adjust padding for scrollbar */
-        padding: 0 1rem;
+        overflow-y: auto; /* السماح بالتمرير داخل الشريط الجانبي فقط */
+        border-right: none; /* إزالة الخط الأيمن القديم */
     }
 
-    /* Pagination */
-    .pagination-container {
-        padding: var(--spacing-unit) 0;
-        flex-shrink: 0;
-    }
-    .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .pagination button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        border-radius: var(--border-radius);
-        border: 1px solid var(--border-color-light);
-        font-weight: 500;
-        transition: background-color 0.2s, color 0.2s;
-    }
-    .pagination button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    .pagination button:not(:disabled):hover {
-        background-color: var(--hover-bg-light);
-    }
-    .pagination button.active {
-        background-color: var(--active-bg-light);
-        color: var(--active-text-light);
-        border-color: var(--active-bg-light);
-    }
-
-    /* Content Area (Right Column) */
+    /* --- قسم المحتوى (الجهة اليمنى) --- */
     .content {
         flex-grow: 1;
         padding: 2rem;
-        overflow-y: auto;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px var(--shadow-color);
+        background-color: var(--card-bg-light);
+        overflow-y: auto; /* السماح بالتمرير داخل المحتوى فقط */
+        display: flex; /* استخدام فليكس لتنسيق المحتوى الداخلي */
+        flex-direction: column;
     }
     .content:empty::before {
-        content: 'Sélectionnez un terme dans la liste pour voir sa définition.';
+        /* تعديل الرسالة الافتراضية لتكون أكثر وضوحاً */
+        content: 'Sélectionnez un terme pour afficher sa définition ici.';
         font-size: 1.2rem;
         color: var(--placeholder-light);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
+        margin: auto; /* لتوسيط الرسالة */
         text-align: center;
     }
 
+    /* تنسيق محتوى التعريف عند عرضه */
     .term-title {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
         font-weight: 700;
-        margin-bottom: 1rem;
-        border-bottom: 2px solid var(--border-color-light);
-        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center; /* توسيط العنوان مثل الصورة */
+        border-bottom: 1px solid var(--border-color-light); /* خط فاصل خفيف */
+        padding-bottom: 1.5rem;
     }
-
     .definition-text {
         font-size: 1.1rem;
-        line-height: 1.7;
-        margin-bottom: 2rem;
+        line-height: 1.8;
+        flex-grow: 1; /* لجعل النص يملأ المساحة المتاحة ودفع الأزرار للأسفل */
     }
-
     .content .definition-buttons {
-        justify-content: flex-start;
+        justify-content: center; /* توسيط الأزرار */
         border: none;
-        padding: 0;
+        padding-top: 1.5rem;
+        margin-top: 1.5rem; /* مسافة فوق الأزرار */
+        border-top: 1px solid var(--border-color-light); /* خط فاصل خفيف */
     }
     .content .definition-btn {
         padding: 0.5rem;
@@ -519,8 +521,33 @@ a {
     .content .definition-btn:hover {
         background-color: var(--hover-bg-light);
     }
+    
+    /* --- التنسيقات الأخرى (قائمة المصطلحات، الترقيم، إلخ) تبقى كما هي --- */
+    /* فهي تعمل بشكل جيد مع التصميم الجديد */
+    .term-list li {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border: 1px solid var(--border-color-light);
+    }
+    .term-list li:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .pagination-container {
+        padding-top: 1.5rem;
+        flex-shrink: 0;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .pagination button {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+    }
 }
-
 
 /* تعديلات التحديث  */
 
@@ -661,3 +688,218 @@ body.dark-mode .desktop-layout .content .definition-btn:hover {
 }
 
 */
+
+/* ============================================= */
+/*          3. DESKTOP LAYOUT STRUCTURE        */
+/* ============================================= */
+
+/* هذه القاعدة تطبق فقط على الشاشات الكبيرة (أكبر من 768 بكسل) */
+@media (min-width: 769px) {
+
+    /* 
+      1. توسيط التصميم بالكامل في وسط الشاشة
+      نفترض أن لديك حاوية رئيسية اسمها .container في ملف HTML
+    */
+    body {
+        display: flex;
+        justify-content: center; /* توسيط أفقي */
+        align-items: center; /* توسيط عمودي */
+        padding: var(--spacing-unit); /* هوامش حول التصميم */
+    }
+
+    #app {
+        width: 100%;
+        max-width: 1200px; /* تحديد عرض أقصى للتصميم */
+        height: 95vh; /* تحديد ارتفاع للتصميم */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /*
+      2. إضافة الظلال والانحناءات لـ Header
+    */
+    header {
+        padding: var(--spacing-unit) calc(var(--spacing-unit) * 1.5);
+        border-radius: var(--border-radius);
+        margin-bottom: calc(var(--spacing-unit) * 1.5);
+        box-shadow: 0 4px 12px var(--shadow-color);
+        background-color: var(--header-light);
+        transition: background-color 0.3s;
+    }
+
+    .site-title {
+        font-size: 1.5rem; /* 24px */
+        font-weight: 600;
+    }
+    
+    /* 
+      3. تنظيم الشريط الجانبي والمحتوى الرئيسي
+    */
+    .main-content {
+        display: flex;
+        gap: calc(var(--spacing-unit) * 1.5);
+        flex-grow: 1;
+        overflow: hidden; /* لمنع المحتوى من تجاوز الحاوية */
+    }
+
+    /*
+      4. إضافة الظلال والانحناءات لـ Sidebar و Content
+    */
+    .sidebar {
+        flex: 0 0 300px; /* عرض ثابت للشريط الجانبي */
+        display: flex;
+        flex-direction: column;
+        padding: calc(var(--spacing-unit) * 1.5);
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px var(--shadow-color);
+        background-color: var(--card-bg-light);
+        transition: background-color 0.3s;
+        overflow-y: auto;
+    }
+
+    .content {
+        flex: 1; /* يأخذ باقي المساحة */
+        padding: calc(var(--spacing-unit) * 1.5);
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px var(--shadow-color);
+        background-color: var(--card-bg-light);
+        transition: background-color 0.3s;
+        overflow-y: auto;
+    }
+}
+
+
+/* hada best media  */
+
+@media (min-width: 769px) {
+
+    /* --- إعدادات أساسية لنسخة سطح المكتب --- */
+    .mobile-layout {
+        display: none;
+    }
+
+    body {
+        /* خلفية رمادية فاتحة لإبراز البطاقات */
+        background-color: #ffffff;
+        padding: 2rem; /* هوامش حول التطبيق بالكامل */
+    }
+    body.dark-mode {
+        background-color: #202124;
+    }
+
+    #app {
+        /* حاوية التطبيق الرئيسية */
+        width: 100%;
+        max-width: 1200px;
+        height: calc(100vh - 4rem); /* يأخذ ارتفاع الشاشة مع طرح الهوامش */
+        margin: 0 auto; /* توسيط الحاوية أفقياً */
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem; /* مسافة بين الهيدر والمحتوى الرئيسي */
+    }
+
+    /* --- الهيدر (الشريط العلوي) --- */
+    .desktop-layout header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--header-light);
+}
+
+    /* --- المحتوى الرئيسي (الذي يحتوي الشريط الجانبي والمحتوى) --- */
+    .main-content {
+        display: flex;
+        gap: 1.5rem; /* مسافة بين الشريط الجانبي والمحتوى */
+        flex-grow: 1;
+        overflow: hidden;
+    }
+
+    /* --- الشريط الجانبي (القائمة اليسرى) --- */
+    .sidebar {
+        flex: 0 0 340px; /* عرض ثابت */
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        /* ستايل البطاقة */
+        background-color: var(--card-bg-light);
+        border-radius: var(--border-radius);
+        box-shadow: 0 8px 16px var(--shadow-color);
+        border: none;
+    }
+    
+    /* --- قسم المحتوى (الجهة اليمنى) --- */
+    .content {
+        flex-grow: 1;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        /* ستايل البطاقة */
+        background-color: var(--card-bg-light);
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px var(--shadow-color);
+    }
+    .content:empty::before {
+        content: 'Sélectionnez un terme pour voir sa définition.';
+        font-size: 1.2rem;
+        color: var(--placeholder-light);
+        margin: auto;
+        text-align: center;
+    }
+
+    /* --- تنسيق محتوى التعريف (مطابق للصورة) --- */
+    .term-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        text-align: center; /* توسيط العنوان */
+        border-bottom: none; /* لا يوجد خط تحت العنوان */
+    }
+
+    .definition-text {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        /* أهم تعديل: إضافة المربع حول النص */
+        border: 1px solid var(--border-color-light);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+    }
+
+    .content .definition-buttons {
+        justify-content: center; /* توسيط الأزرار */
+        border: none; /* إزالة أي خطوط */
+        padding: 0;
+        margin-top: auto; /* دفع الأزرار إلى الأسفل */
+    }
+    
+    /* --- تنسيقات أخرى (Pagination) --- */
+    /* (هذا الكود صحيح ويجب الإبقاء عليه) */
+    .pagination-container {
+        padding-top: 1.5rem;
+        flex-shrink: 0;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .pagination button {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid var(--border-color-light);
+    }
+    .pagination button.active {
+        background-color: var(--active-bg-light);
+        color: var(--active-text-light);
+        border-color: var(--active-bg-light);
+    }
+}
